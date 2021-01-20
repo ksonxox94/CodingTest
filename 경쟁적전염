@@ -1,0 +1,113 @@
+#include<iostream>
+#include<vector>
+#include<queue>
+using namespace std;
+struct pos
+{
+	int x;
+	int y;
+};
+struct compare //우선순위 큐의 우선순위 선정을 위한 구조체
+{
+	bool operator()(pair<pos, int> a, pair<pos, int> b)
+	{
+		return a.second > b.second; //pair의 second 값(좌표 값) 기준으로 오름차순 정렬
+	}
+};
+queue<pair<int, int>> q; //바이러스가 있는 좌표를 저장하는 큐
+priority_queue<pair<pos, int>, vector<pair<pos, int>>, compare> pq; //바이러스 중요도 오름차순으로 좌표를 저장하는 우선순위 큐
+
+int n, k, x, y, s;
+int t = 0;
+int cnt = 0;
+int arr[201][201];
+int dx[4] = { 0,1,0,-1 };
+int dy[4] = { -1,0,1,0 };
+void printarray()
+{
+	cout << "\n";
+	cout << "time:" << t << "초\n";
+	for (int i = 1; i <= n; ++i)
+	{
+		for (int j = 1; j <= n; ++j)
+		{
+			cout << arr[i][j] << " ";
+		}
+		cout << "\n";
+	}
+	cout << "\n\n";
+}
+void bfs()
+{
+	int size = 0;
+	while (!pq.empty())//우선순위 큐가 empty 될 때 까지 일반 큐에 좌표를 넣음 
+	{
+		q.push(make_pair(pq.top().first.y, pq.top().first.x));
+		pq.pop();
+	}
+	while (!q.empty())//중요도 오름차순으로 바이러스 좌표가 큐에 들어가게 됨 
+	{
+		if (cnt == 0) //t초에서 바이러스 맵을 탐색하기 전에(cnt가 0일 때) 큐의 사이즈(바이러스의 수)를 계산
+		{
+			size = q.size();
+		}
+		int fy = q.front().first; 
+		int fx = q.front().second;
+		q.pop();
+		for (int d = 0; d < 4; ++d)//상하좌우로 탐색해서 바이러스가 퍼질 수 있으면
+		{
+			int newY = fy + dy[d];
+			int newX = fx + dx[d];
+			if (0 < newY && newY <= n && 0 < newX && newX <= n && arr[newY][newX] == 0)
+			{
+				arr[newY][newX] = arr[fy][fx];//해당 좌표에 해당 바이러스의 중요도를 넣고
+				q.push(make_pair(newY, newX));//큐에 좌표를 넣음
+				printarray();
+			}
+		}
+		cnt++;//바이러스 1개에 대해 퍼질 수 있는지 모두 탐색했을때 cnt 1 증가
+		if (cnt == size)//t초에서 모든 바이러스에 대해 탐색을 완료했으므로 시간 t 증가 
+		{
+			t++;
+			if (t == s)//t가 입력받은 s와 동일하면
+			{
+				cout << arr[x][y];//s초 후 좌표 값 출력
+				break;
+			}
+			cnt = 0;
+		}
+	}
+}
+int main()
+{
+	ios_base::sync_with_stdio(false);
+	cin.tie(NULL);
+	cin >> n >> k;
+	for (int i = 1; i <= n; ++i)
+	{
+		for (int j = 1; j <= n; ++j)
+		{
+			cin >> arr[i][j];
+			if (arr[i][j] > 0)
+			{
+				pos p; //pos 구조체에 좌표를 담음
+				p.y = i;
+				p.x = j;
+				pq.push(make_pair(p, arr[i][j]));//좌표와 좌표값을 우선순위 큐에 넣음
+			}
+		}
+	}
+	cin >> s >> x >> y;
+	if (s == 0)
+	{
+		cout << arr[x][y]; //입력 시간 s가 0이면 초기 배열로부터 값 출력
+	}
+	else
+	{
+		bfs();
+		if (s > t) //입력 시간 s가 바이러스가 모두 퍼진 시간 t보다 크면 최종 배열로부터 값 출력
+		{
+			cout << arr[x][y];
+		}
+	}
+}
