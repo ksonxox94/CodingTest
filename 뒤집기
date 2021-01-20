@@ -1,0 +1,35 @@
+#include<iostream>
+#include<string>
+#include<algorithm>
+using namespace std;
+int main()
+{
+	ios_base::sync_with_stdio(false);
+	cin.tie(NULL);
+	string s;
+	cin >> s;
+	//getline(cin, s); 공백도 입력 받으려면, 종료 default는 \n
+	cout << s;
+	int fcnt=0;
+	int zcnt=0;
+	if (s[0] == '0')
+	{
+		zcnt++;
+	}
+	else if (s[0]=='1')
+	{
+		fcnt++;
+	}
+	for (int i = 1; i < s.length(); i++)
+	{
+		if (s[i] - s[i - 1] == 1) //0서 1로 바뀔때
+		{
+			fcnt++;
+		}
+		else if (s[i] - s[i - 1] == -1) //1서 0으로 바뀔때
+		{
+			zcnt++;
+		}
+	}
+	cout << min(fcnt, zcnt);
+}
