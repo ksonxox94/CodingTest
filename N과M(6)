@@ -1,0 +1,52 @@
+#include<iostream>
+using namespace std;
+void func(int arr[],int num[],int n,int m,int c,int s)
+{
+	arr[c] = num[s]; 
+	++c;
+	if (c < m)
+	{ 
+		for (int i = s + 1; i < n; ++i)
+		{
+			func(arr, num, n, m, c, i);
+		}
+	}
+	else
+	{
+		for (int i = 0; i < m; ++i)
+		{
+			cout << arr[i] << " ";
+		}
+		cout << "\n";
+	}
+}
+void selectionSort(int *num,int n)
+{
+	for (int i = 0; i < n; ++i)
+	{
+		for (int j = i + 1; j < n; ++j)
+		{
+			if (num[j] < num[i])
+			{
+				int temp = num[i];
+				num[i] = num[j];
+				num[j] = temp;
+			}
+		}
+	}
+}
+int main()
+{
+	int n, m,num[8],arr[8];
+	cin >> n >> m;
+	for (int i = 0; i < n; ++i)
+	{
+		cin >> num[i];
+	}
+	selectionSort(num, n);
+	for (int i = 0; i < n; ++i)
+	{
+		func(arr, num, n, m, 0, i);
+	}
+	return 0;
+}
