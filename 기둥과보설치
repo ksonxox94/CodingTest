@@ -1,0 +1,153 @@
+/*
+https://programmers.co.kr/learn/courses/30/lessons/60061
+*/
+#include <string>
+#include <vector>
+#include <iostream>
+using namespace std;
+struct cont {
+	bool xx = false; //보
+	bool yy = false; //기둥
+};
+cont arr[101][101];
+bool impossibleDelete() //삭제 불가능하면 바로 true 리턴
+{
+	for (int i = 0; i < 101; ++i)
+	{
+		for (int j = 0; j < 101; ++j)
+		{
+			if (arr[i][j].yy == true) //기둥인 경우
+			{
+				if (i == 0) {} //바닥
+				else if (arr[i - 1][j].yy == true) {} //밑에 기둥
+				else if (arr[i][j - 1].xx == true || arr[i][j].xx == true) {} //보의 한쪽 끝일때
+				else
+					return true;//삭제 불가능하므로 바로 true 리턴하고 종료
+			}
+			if (i > 0 && arr[i][j].xx == true)//보인 경우
+			{
+				if (arr[i - 1][j].yy == true || arr[i - 1][j + 1].yy == true) {} //보의 한쪽이 기둥과 연결되어 있을 때
+				else if (arr[i][j - 1].xx == true && arr[i][j + 1].xx == true) {} //보의 양쪽 끝이 다른 보와 연결되어 있을때
+				else
+					return true; //삭제 불가능하므로 바로 true 리턴하고 종료
+			}
+		}
+	}
+	return false; //삭제 가능한 경우 false 리턴
+}
+bool possibleYY(int y, int x) //기둥 생성 가능 검증
+{
+	if (y == 0) //바닥일때
+		return true;
+	else if (arr[y - 1][x].yy == true) //바로 밑에 기둥이 있을때
+		return true;
+	else if (arr[y][x - 1].xx == true || arr[y][x].xx == true) //보의 한쪽 끝일 때
+		return true;
+	else
+		return false;
+}
+bool possibleXX(int y, int x) //보 생성 가능 검증
+{
+	if (arr[y - 1][x].yy == true || arr[y - 1][x + 1].yy == true) //보의 한쪽이 기둥과 연결되어 있을때
+		return true;
+	else if (arr[y][x - 1].xx == true && arr[y][x + 1].xx == true) //보의 양쪽 끝이 다른 보와 연결되어 있을때
+		return true;
+	else
+		return false;
+}
+vector<vector<int>> solution(int n, vector<vector<int>> build_frame) {
+	vector<vector<int>> answer;
+	for (int i = 0; i < build_frame.size(); ++i)
+	{
+		int x = build_frame[i][0];
+		int y = build_frame[i][1];
+		int w = build_frame[i][2];
+		int z = build_frame[i][3];
+		if (z == 1) //생성
+		{
+			if (w == 0)//기둥
+			{
+				if (possibleYY(y, x))
+				{
+					arr[y][x].yy = true;
+				}
+
+			}
+			else if (w == 1)//보
+			{
+				if (possibleXX(y, x))
+				{
+					arr[y][x].xx = true;
+				}
+
+			}
+		}
+		else if (z == 0) //제거
+		{
+			if (w == 0)//기둥
+			{
+				arr[y][x].yy = false;
+				if (impossibleDelete())
+				{
+					arr[y][x].yy = true;
+				}
+			}
+			else if (w == 1)//보
+			{
+				arr[y][x].xx = false;
+				if (impossibleDelete())
+				{
+					arr[y][x].xx = true;
+				}
+			}
+		}
+	}
+	for (int i = 0; i < 101; ++i)//x기준으로 오름차순, x가 같을때는 y기준 오름차순
+	{
+		for (int j = 0; j < 101; ++j)//x기준 오름 차순이므로 y축으로 먼저 탐색한 다음 x축으로 넘어감
+		{
+			if (arr[j][i].yy == true) //기둥이 있으면
+			{
+				vector<int> aa;
+				aa.push_back(i);
+				aa.push_back(j);
+				aa.push_back(0);
+				answer.push_back(aa);
+			}
+			if (arr[j][i].xx == true)//보가 있으면
+			{
+				vector<int> aa;
+				aa.push_back(i);
+				aa.push_back(j);
+				aa.push_back(1);
+				answer.push_back(aa);
+			}
+		}
+	}
+	return answer;
+}
+int main()
+{
+	int n;
+	int h;
+	cin >> n;
+	cin >> h;
+	vector < vector <int> > v(h, vector <int>(4, 0));
+	for (int i = 0; i < h; ++i)
+	{
+		for (int j = 0; j < 4; ++j)
+		{
+			cin >> v[i][j];
+		}
+	}
+	vector<vector<int>> answer = solution(n, v);
+	for (int i = 0; i < answer.size(); ++i)
+	{
+		for (int j = 0; j < 3; ++j)
+		{
+			cout << answer[i][j] << " ";
+		}
+		cout << "\n";
+	}
+	return 0;
+}
