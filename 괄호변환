@@ -1,0 +1,83 @@
+/*
+https://programmers.co.kr/learn/courses/30/lessons/60058
+*/
+#include<iostream>
+#include<string>
+using namespace std;
+string reverse(string u) // '(',')'를 반대로 바꿔주는 함수
+{
+	string temp;
+	for (int i = 1; i < u.length() - 1; ++i)
+	{
+		if (u[i] == '(')
+			temp.push_back(')');
+		else if (u[i] == ')')
+			temp.push_back('(');
+	}
+	return temp;
+}
+bool validateInput(string p) // 괄호가 올바른가 검증하는 함수
+{
+	int lcnt = 0;
+	int rcnt = 0;
+	if (p[0] == ')')
+		return false;
+	if (p[p.length() - 1] == '(')
+		return false;
+	for (int i = 0; i < p.length(); ++i) // "())"처럼 ( 수보다 )) 수가 많아지면 무조건 false
+	{
+		if (p[i] == '(')
+			lcnt++;
+		else if (p[i] == ')')
+			rcnt++;
+		if (rcnt > lcnt)
+			return false;
+	}
+	return true;
+}
+string solution(string p) //DFS 함수
+{
+	int lcnt = 0;
+	int rcnt = 0;
+	string u;
+	string v;
+	if (p == "") //빈 문자열이면 빈 문자열 그대로 리턴
+		return p;
+	if (validateInput(p) == 0) //괄호 문자열이 올바르지 않으면
+	{
+		for (int i = 0; i < p.length(); ++i) //괄호 '('와 ')' 수가 일치하고 더이상 분리되지않게 자르는 부분
+		{
+			if (p[i] == '(')
+			{
+				u.push_back('(');
+				lcnt++;
+			}
+			else if (p[i] == ')')
+			{
+				u.push_back(')');
+				rcnt++;
+			}
+			if (lcnt == rcnt)
+			{
+				v = p.substr(i + 1, p.length() - i);
+				break;
+			}
+		}
+		if (validateInput(u) == 1) //괄호 문자열 u가 올바르면
+			return u + solution(v); //u에 v의 dfs 리턴 값과 더해서 리턴
+		else //괄호 문자열 u가 올바르지 않으면
+			return '(' + solution(v) + ')' + reverse(u); // (+v+)+앞뒤 괄호 없애고 반대로 바꾼u 리턴
+	}
+	else //괄호 문자열이 올바르면 그대로 리턴
+	{
+		return p;
+	}
+}
+int main()
+{
+	ios_base::sync_with_stdio(false);
+	cin.tie(NULL);
+	string p;
+	cin >> p;
+	cout << solution(p);
+}
