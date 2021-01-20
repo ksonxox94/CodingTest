@@ -1,0 +1,48 @@
+/*
+https://programmers.co.kr/learn/courses/30/lessons/42889
+*/
+#include <string>
+#include <vector>
+#include <iostream>
+#include <algorithm>
+using namespace std;
+bool compare(pair<float, int> a, pair<float, int> b)
+{
+	if (a.first == b.first)
+		return a.second < b.second;
+	else
+		return a.first > b.first;
+}
+vector<int> solution(int N, vector<int> stages) {
+	vector<int> answer;
+	vector<int> pv(N + 2, 0);
+	vector<pair<float, int>> fv;
+	int pnum = stages.size();
+	for (int i = 0; i < stages.size(); ++i)
+		pv[stages[i]]++;
+	for (int i = 1; i <= N; ++i)
+	{
+		float frate = 0;
+		if (pnum > 0) //비주얼 스튜디오에서는 0으로 나눠도 0으로 예외처리가 되지만 실제로는 불가능하기 때문에 시험환경에서는 틀렸다고나옴
+			frate = float(pv[i]) / pnum;
+		fv.push_back(make_pair(frate, i));
+		pnum = pnum - pv[i];
+	}
+	sort(fv.begin(), fv.end(), compare);
+	for (int i = 0; i < N; ++i)
+		answer.push_back(fv[i].second);
+	return answer;
+}
+int main()
+{
+	int n;
+	cin >> n;
+	vector<int> v;
+	for (int i = 0; i < 8; ++i)
+	{
+		int val;
+		cin >> val;
+		v.push_back(val);
+	}
+	solution(n, v);
+}
