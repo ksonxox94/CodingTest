@@ -1,0 +1,35 @@
+#include<iostream>
+using namespace std;
+void func(int n,int m,int s,int arr[],int c)
+{
+	arr[c] = s; 
+	++s; 
+	++c; 
+	if (c < m)  
+	{
+		for (int i = s; i <= n; i++)
+		{
+			func(n, m, i,arr,c);
+		}
+	}
+	else
+	{
+		for (int i = 0; i < m; i++)
+		{
+			cout << arr[i] << " ";
+		}
+		cout << "\n";
+	}
+}
+int main()
+{
+	int n;
+	int m;
+	int arr[8];
+	cin >> n >> m;
+	for (int i = 1; i <= n; i++)
+	{
+		func(n, m,i,arr,0);
+	}
+	return 0;
+}
