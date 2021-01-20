@@ -1,0 +1,60 @@
+/*
+https://programmers.co.kr/learn/courses/30/lessons/60057
+*/
+#include<iostream>
+#include<algorithm>
+#include<string>
+using namespace std;
+int function(string s)
+{
+	int len = s.length();
+	int minValue = len;
+	string word;
+	for (int i = 1; i <= len / 2; ++i)
+	{
+		int rlen = len;
+		int pos = 0;
+		for (;;)
+		{
+			word = s.substr(pos, i); //pos=0
+			int cnt = 0;
+			pos = pos + i;
+			if (len-pos<i)
+			{
+				break;
+			}
+			for (;;)
+			{
+				if (word.compare(s.substr(pos, i)) == 0)
+				{
+					cnt++;
+					pos = pos + i;
+				}
+				else
+				{
+					break;
+				}
+			}
+			rlen = rlen - cnt * i;
+			if (cnt > 998)
+				rlen = rlen + 4;
+			else if (cnt > 98)
+				rlen = rlen + 3;
+			else if (cnt > 8)
+				rlen = rlen + 2;
+			else if (cnt > 0)
+				rlen = rlen + 1;
+		}
+		minValue = min(minValue, rlen);
+	}
+	return minValue;
+}
+int main()
+{
+	ios_base::sync_with_stdio(false);
+	cin.tie(NULL);
+	string s;
+	cin >> s;
+	cout << function(s);
+	return 0;
+}
