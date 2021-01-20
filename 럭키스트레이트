@@ -1,0 +1,40 @@
+#include<iostream>
+#include<string>
+using namespace std;
+int main()
+{
+	ios_base::sync_with_stdio(false);
+	cin.tie(NULL);
+	string s_input;
+	int input_size;
+	int fsum=0;
+	int esum=0;
+	int cnt = 0;
+	int i_input=0;
+	cin >> s_input;
+	input_size = s_input.length();
+	i_input = stoi(s_input);
+	while (cnt<input_size)
+	{
+		if (cnt < input_size / 2)
+		{
+			fsum = fsum+(i_input % 10);
+			i_input = i_input / 10;
+		}
+		else
+		{
+			esum = esum + (i_input % 10);
+			i_input = i_input / 10;
+		}
+		cnt++;
+	}
+	if (fsum == esum)
+	{
+		cout << "LUCKY\n";
+	}
+	else
+	{
+		cout << "READY\n";
+	}
+	return 0;
+}
