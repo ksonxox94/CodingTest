@@ -1,0 +1,32 @@
+/*
+세로X가로 일때
+타일이 2X1 1X2 2X2일때
+2XN 직사각형을 채우는 방법의 수 구하기
+1.N이 1일때 방법 1개
+2.N이 2일때 방법 3개
+3.N이 3일때 
+가능한 경우
+D(N-2)+2X2
+D(N-2)+2(1X2)
+D(N-1)+(2X1)
+■D(N)=2D(N-2)+D(N-1)
+*/
+#include<iostream>
+using namespace std;
+int d[1001];
+int dp(int n)
+{
+	if (n == 1) return 1;
+	if (n == 2) return 3;
+	if (d[n] != 0) return d[n];
+	d[n] = (2 * dp(n - 2) + dp(n - 1)) % 10007;
+	return d[n];
+}
+int main()
+{
+	ios_base::sync_with_stdio(false);
+	cin.tie(NULL);
+	int n;
+	cin >> n;
+	cout << dp(n);
+}
