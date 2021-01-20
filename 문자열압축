@@ -58,3 +58,71 @@ int main()
 	cout << function(s);
 	return 0;
 }
+
+
+///////////////////////////////////////////////////////////////////
+//중간에 연속되지 않는 값이 들어가있어도 계산되는 프로그램
+#include<iostream>
+#include<algorithm>
+#include<string>
+#include <chrono>
+using namespace std;
+using namespace chrono;
+int function(string s)
+{
+	int len = s.length();
+	int minValue = 2000;
+	string word;
+	for (int i = 1; i <= len / 2; ++i)
+	{
+		int rlen = len;
+		int pos = 0;
+		for (;;)
+		{//len-(pos+i)>=i   len-pos-i>i len-pos>2i (len-pos)/2 > i
+			if ( (len - pos)/2 < i)
+			{
+				break;
+			}
+			word = s.substr(pos, i);
+			int cnt = 0;
+			for (;;)
+			{
+				if (word.compare(s.substr(pos = pos + i, i)) == 0)
+				{
+					cnt++;
+				}
+				else
+				{
+					pos = pos - i + 1;
+					break;
+				}
+			}
+			rlen = rlen - cnt * i;
+			if (cnt > 998)
+				rlen = rlen + 4;
+			else if (cnt > 98)
+				rlen = rlen + 3;
+			else if (cnt > 8)
+				rlen = rlen + 2;
+			else if (cnt > 0)
+				rlen = rlen + 1;
+			cout << cnt << word << "\n";
+		}
+		cout << minValue<<"\n---------------\n";
+		minValue = min(minValue, rlen);
+	}
+	return minValue;
+}
+int main()
+{
+	ios_base::sync_with_stdio(false);
+	cin.tie(NULL);
+	string s;
+	cin >> s;
+	//system_clock::time_point startTime = system_clock::now();
+	cout << function(s)<<"\n";
+	//system_clock::time_point endTime = system_clock::now();
+	//nanoseconds nano = endTime - startTime;
+	//cout << nano.count()/10000<<"ms\n";
+	return 0;
+}
