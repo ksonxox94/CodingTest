@@ -1,0 +1,64 @@
+#include <stdio.h>
+int main(void)
+{
+	int t;
+	int a[50][4]; //요금 항목
+	int b[50][13];  //이용 계획 월별 항목
+	int month_min[50][13]; //최종 월 요금
+	int fee[50][13] = { 0 }; //케이스별 최적의 요금
+	scanf("%d", &t);
+	for (int i = 0; i < t; ++i)
+	{
+		for (int j = 0; j < 4; ++j)
+		{
+			scanf("%d", &a[i][j]);
+		}
+		for (int k = 1; k < 13; ++k)
+		{
+			scanf("%d", &b[i][k]);
+		}
+	}
+	
+	for (int i = 0; i < t; ++i)
+	{
+		//i=test case
+		//j=month
+		//a[t][4] fee
+		//b[t][12] plan
+		for (int j = 1; j < 13; ++j)
+		{
+			if (a[i][0] * b[i][j] < a[i][1])
+			{
+				month_min[i][j] = a[i][0] * b[i][j];
+			}
+			else
+			{
+				month_min[i][j] = a[i][1];
+			}
+		}
+	}
+	for (int i = 0; i < t; ++i)
+	{
+		for (int j = 1; j < 13; ++j)
+		{
+			fee[i][j] = fee[i][j - 1] + month_min[i][j];
+			if (j >= 3)
+			{
+				if(fee[i][j] - fee[i][j - 3] > a[i][2])
+				{
+					fee[i][j] = fee[i][j - 3] + a[i][2];
+				}
+			}
+		}
+		if (fee[i][12] > a[i][3])
+		{
+			fee[i][12] = a[i][3];
+		}
+	}
+
+	for (int i = 0; i < t; ++i)
+	{
+		printf("#%d ", i + 1);
+		printf("%d\n", fee[i][12]);
+	}
+}
