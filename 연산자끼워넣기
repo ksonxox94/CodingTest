@@ -1,0 +1,63 @@
+#include<iostream>
+#include<vector>
+#include<algorithm>
+using namespace std;
+vector<int> v;
+vector<int> result;
+int n;
+void solution(int current, int ans, int y[4])//current=현재 숫자 인덱스, ans=현재 연산 결과 값, y=연산자 개수 저장 배열
+{
+	if (current == n - 1) //마지막 숫자까지 연산이 완료되면
+	{
+		result.push_back(ans); //연산 결과를 벡터에 저장
+	}
+	else
+	{
+		for (int i = 0; i < 4; i++) //연산자 배열(+-*/)을 탐색해서  
+		{
+			if (y[i] > 0) //해당 연산자 개수가 0보다 크면
+			{
+				int next = current + 1;//다음 숫자 인덱스
+				y[i]--;//해당 연산자를 사용했으므로 1 빼줌
+				if (i == 0) //덧셈
+				{
+					solution(next, ans + v[next], y); //현재 숫자와 다음 숫자를 해당 연산자로 연산하고 재귀함수로 넘겨줌
+				}
+				else if (i == 1) //뺄셈
+				{
+					solution(next, ans - v[next], y);
+				}
+				else if (i == 2) //곱셈
+				{
+					solution(next, ans * v[next], y);
+				}
+				else if (i == 3) //나눗셈
+				{
+					solution(next, ans / v[next], y);
+				}
+				y[i]++; //백트래킹 한 이후라서 연산자 개수를 원래대로 복구
+			}
+		}
+	}
+}
+int main()
+{
+	ios_base::sync_with_stdio(false);
+	cin.tie(NULL);
+	int y[4];
+	cin >> n;
+	for (int i = 0; i < n; ++i)
+	{
+		int num;
+		cin >> num;
+		v.push_back(num);
+	}
+	for (int i = 0; i < 4; ++i)
+	{
+		cin >> y[i];
+	}
+	solution(0, v[0], y);
+	sort(result.begin(), result.end());
+	cout << result[result.size() - 1] << "\n";
+	cout << result[0];
+}
