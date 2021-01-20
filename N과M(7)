@@ -1,0 +1,86 @@
+#include<iostream>
+using namespace std;
+void func(int num[],int arr[],int n,int m,int s,int c)
+{
+	arr[c] = num[s];
+	++c;
+	if (c < m)
+	{
+		for (int i = 0; i < n; ++i)
+		{
+			func(num, arr, n, m, i, c);
+		}
+	}
+	else
+	{
+		for (int i = 0; i < m; ++i)
+		{
+			cout << arr[i] << " ";
+		}
+		cout << "\n";
+	}
+}
+int partition(int *num, int low, int high, int pivotPoint)
+{
+	int pivotItem = num[pivotPoint];
+	do
+	{
+		while (num[low] < pivotItem)
+		{
+			++low;
+		}
+		while (num[high] > pivotItem)
+		{
+			--high;
+		}
+		if (low < high)
+		{
+			swap(num[low], num[high]);
+		}
+	} while (low < high);
+	swap(pivotItem, num[high]);
+	return high;
+}
+void quickSort(int *num, int low, int high)
+{
+	if (high > low)
+	{
+		int pivotPoint = (low+high)/2;
+		pivotPoint = partition(num, low, high, pivotPoint);
+		quickSort(num, low, pivotPoint - 1);
+		quickSort(num, pivotPoint + 1, high);
+	}
+}
+void swap(int &a, int &b)
+{
+	int temp = a;
+	a = b;
+	b = temp;
+}
+void selectionSort(int *num, int n)
+{
+	for(int i=0;i<n;++i)
+		for (int j = i + 1; j < n; ++j)
+		{
+			if (num[j] < num[i])
+			{
+				swap(num[j], num[i]);
+			}
+		}
+}
+int main()
+{
+	int n, m, num[7], arr[7];
+	cin >> n >> m;
+	for (int i = 0; i < n; ++i)
+	{
+		cin >> num[i];
+	}
+	//selectionSort(num, n);
+	quickSort(num, 0, n - 1);
+	for (int i = 0; i < n; ++i)
+	{
+		func(num, arr, n, m, i, 0);
+	}
+	return 0;
+}
