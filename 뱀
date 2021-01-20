@@ -1,0 +1,192 @@
+#include<iostream>
+#include<vector>
+using namespace std;
+struct position //뱀의 머리 위치
+{
+	int y;
+	int x;
+};
+struct apple //사과 위치
+{
+	int y;
+	int x;
+};
+struct direction //방향 전환 정보 
+{
+	int time;
+	char dir;
+};
+int snake[101][101]; //뱀이 있는 좌표를 저장하는 2차원 배열
+vector<position> s_pos; //뱀 머리가 이동한 좌표가 기록되는 벡터
+apple a_arr[101]; //사과의 위치를 저장할 배열
+direction d_arr[101]; //방향 전환 정보를 저장할 배열 
+void print(int N)
+{
+	for (int m = 1; m <= N; m++)
+	{
+		for (int n = 1; n <= N; n++)
+		{
+
+			cout << snake[m][n] << " ";
+		}
+		cout << "\n";
+	}
+}
+int main()
+{
+	ios_base::sync_with_stdio(false);
+	cin.tie(NULL);
+	int N;
+	int K;
+	int L;
+	int direction = 0; // 0:오른쪽으로 1:아래쪽으로 2:왼쪽으로 3:위쪽으로
+	cin >> N;
+	cin >> K;
+	for (int i = 0; i < K; ++i)
+	{
+		cin >> a_arr[i].y;
+		cin >> a_arr[i].x;
+	}
+	cin >> L;
+	for (int i = 0; i < L; ++i)
+	{
+		cin >> d_arr[i].time;
+		cin >> d_arr[i].dir;
+	}
+	cout << "\n";
+	int p_y = 0; //초기 방향 세팅 (오른쪽)
+	int p_x = 1;
+	position pos;
+	pos.y = 1; //초기 뱀머리 좌표
+	pos.x = 1;
+	int d = 0; //초기 방향 세팅 (오른쪽)
+	int snake_length = 1; //초기 뱀 길이
+	snake[pos.y][pos.x] = 1; //초기 뱀이 있는 좌표
+	s_pos.push_back(pos); //뱀 머리가 있는 좌표를 벡터에 푸쉬백
+	for (int i = 1;; ++i) //for문 안에는 i초 후의 상황임
+	{
+		int chk = 0;
+		pos.y = pos.y + p_y; //방향에 따라 뱀머리 좌표 이동
+		pos.x = pos.x + p_x;
+		if (snake[pos.y][pos.x] == 1)
+		{
+			cout << i;
+			cout << "초 때 몸이랑 부딪혀서 종료\n";
+			break;
+		}
+		else if (pos.x<1 || pos.x>N || pos.y<1 || pos.y>N)
+		{
+			cout << i;
+			cout << "초 때 벽이랑 부딪혀서 종료\n";
+			break;
+		}
+
+		//1초 전 뱀머리 좌표와 현재 뱀머리 좌표를 통해 이동방향 계산
+		if (pos.x - s_pos.back().x > 0 && pos.y == s_pos.back().y) 
+		{
+			direction = 0; //현재 x좌표가 1초 전 x좌표보다 크고 y좌표는 그대로면 오른쪽으로 이동한 것
+		}
+		else if (pos.x - s_pos.back().x < 0 && pos.y == s_pos.back().y)
+		{
+			direction = 2; //현재 x좌표가 1초 전 x좌표보다 작고 y좌표는 그대로면 왼쪽으로 이동한 것
+		}
+		else if (pos.x == s_pos.back().x  && pos.y - s_pos.back().y > 0)
+		{
+			direction = 1; //x좌표가 그대로고 현재 y좌표가 1초 전 y좌표보다 크면 아래로 이동한 것
+		}
+		else if (pos.x == s_pos.back().x  && pos.y - s_pos.back().y < 0)
+		{
+			direction = 3; //x좌표가 그대로고 현재 y좌표가 1초 전 y좌표보다 작으면 위로 이동한 것
+		}
+		snake[pos.y][pos.x] = 1; //새로 이동한 좌표에 뱀머리가 가게 됨
+		s_pos.push_back(pos); //새로 이동한 좌표를 벡터에 넣음
+		cout << i << "초 후:" << pos.y << "," << pos.x << "\n";
+
+		for (int j = 0; j < K; ++j) //이동한 좌표에 사과가 있으면
+		{
+			if (pos.y == a_arr[j].y && pos.x == a_arr[j].x)
+			{
+				cout << a_arr[j].y <<","<<a_arr[j].x << "좌표의 사과 먹음\n";
+				++snake_length; //뱀 길이를 늘리고
+				a_arr[j].y = 0; //사과가 있던 좌표에 사과를 없애줌
+				a_arr[j].x = 0;
+				chk = 1; 
+				break;
+			}
+		}
+		/*
+		0 0 1 1
+		0 0 0 1
+		0 0 0 0
+
+		0 0 0 1
+		0 0 0 1
+		0 0 0 1
+		*/
+		if (chk == 0) //사과가 없으면 원래 뱀의 꼬리가 있던 좌표의 값을 0으로 바꿔줌(꼬리가 이동했으므로)  
+		{
+			cout << "사과 못 먹어서 꼬리 이동\n";
+			// snake[뱀 길이만큼 이전의 뱀 머리 y좌표][뱀 길이만큼 이전의 뱀 머리 x좌표] 
+			snake[s_pos[i - snake_length].y][s_pos[i - snake_length].x] = 0;
+		}
+		cout << "뱀길이:" << snake_length << "\n";
+		print(N);
+		cout << "\n";
+		if (i == d_arr[d].time) //계산한 direction과 입력받은 방향 및 시간 정보에 따른 방향 전환 처리
+		{
+			if (direction == 0)// >
+			{
+				if (d_arr[d].dir == 'L')
+				{
+					p_x = 0;
+					p_y = -1;
+				}
+				else if (d_arr[d].dir == 'D')
+				{
+					p_x = 0;
+					p_y = 1;
+				}
+			}
+			else if (direction == 1)// V
+			{
+				if (d_arr[d].dir == 'L')
+				{
+					p_x = 1;
+					p_y = 0;
+				}
+				else if (d_arr[d].dir == 'D')
+				{
+					p_x = -1;
+					p_y = 0;
+				}
+			}
+			else if (direction == 2) // <
+			{
+				if (d_arr[d].dir == 'L')
+				{
+					p_x = 0;
+					p_y = 1;
+				}
+				else if (d_arr[d].dir == 'D')
+				{
+					p_x = 0;
+					p_y = -1;
+				}
+			}
+			else if (direction == 3) // ㅅ
+			{
+				if (d_arr[d].dir == 'L')
+				{
+					p_x = -1;
+					p_y = 0;
+				}
+				else if (d_arr[d].dir == 'D')
+				{
+					p_x = 1;
+					p_y = 0;
+				}
+			}
+			d++;
+		}
+	}
+}
