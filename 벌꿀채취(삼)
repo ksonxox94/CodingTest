@@ -1,0 +1,239 @@
+#include<iostream>
+#include<vector>
+#include<queue>
+using namespace std;
+int chkmap[10][10];
+int maxval = 0;
+priority_queue<int, vector<int>, less<int>> q;
+void calmax(vector<int> v, int cnt, int idx, int val, int sum, int c)
+{
+	for (int i = idx; i < v.size(); ++i)
+	{
+		sum = sum + v[i];
+		if (sum <= c)
+		{
+			val = val + v[i] * v[i];
+			q.push(val);
+		}
+		calmax(v, cnt + 1, i + 1, val, sum, c);
+		if (sum <= c)
+		{
+			val = val - v[i] * v[i];
+		}
+		sum = sum - v[i];
+	}
+}
+void function(int map[][10], int n, int m, int c, int p, int total, int y)
+{
+	if (p == 2)
+	{
+		if (total > maxval)
+		{
+			maxval = total;
+		}
+	}
+	else
+	{
+		for (int i = y; i < n; ++i)
+		{
+			for (int j = 0; j <= n - m; ++j)
+			{
+				int chk = 0;
+				int val = 0;
+				vector<int> v;
+				int ny = 0;
+				int nx = 0;
+				for (int h = 0; h < m; ++h)
+				{
+					ny = i;
+					nx = j + h;
+					if (chkmap[ny][nx] != 1)
+					{
+						chk++;
+					}
+					else
+						break;
+				}
+				if (chk == m)
+				{
+					for (int h = 0; h < m; ++h)
+					{
+						ny = i;
+						nx = j + h;
+						chkmap[ny][nx] = 1;
+						v.push_back(map[ny][nx]);
+					}
+					calmax(v, 0, 0, 0, 0, c);
+					val = q.top();
+					for (int qi = 0; qi < q.size(); ++qi)
+					{
+						q.pop();
+					}
+					function(map, n, m, c, p + 1, total + val, ny);
+					for (int h = 0; h < m; ++h)
+					{
+						ny = i;
+						nx = j + h;
+						chkmap[ny][nx] = 0;
+					}
+				}
+			}
+		}
+	}
+}
+int main(int argc, char** argv)
+{
+	int test_case;
+	int T;
+	cin >> T;
+	for (test_case = 1; test_case <= T; ++test_case)
+	{
+		int map[10][10];
+		int n;
+		int m;
+		int c;
+		cin >> n >> m >> c;
+		for (int i = 0; i < n; ++i)
+		{
+			for (int j = 0; j < n; ++j)
+			{
+				cin >> map[i][j];
+			}
+		}
+		function(map, n, m, c, 0, 0, 0);
+		cout << "#" << test_case << " " << maxval << "\n";
+		maxval = 0;
+	}
+	return 0;
+}
+
+
+
+
+
+
+////////////////////////////////////////////////////////////////////////
+
+
+
+
+
+#include<iostream>
+#include<vector>
+#include<queue>
+using namespace std;
+int chkmap[10][10];
+int maxval = 0;
+priority_queue<int, vector<int>, less<int>> q;
+void func(vector<int> v,vector<bool> visited,int start,int r,int c)
+{
+	if (r == 0) {
+		int sum = 0;
+		int val = 0;
+		for (int i = 0; i < v.size(); i++) {
+			if (visited[i]) {
+				sum = sum + v[i];
+				val = val + v[i] * v[i];
+			}
+		}
+		if (sum <= c)
+		{
+			q.push(val);
+		}
+		return;
+	}
+
+	for (int i = start; i < v.size(); i++) {
+		visited[i] = true;
+		func(v, visited, i + 1, r - 1,c);
+		visited[i] = false;
+	}
+
+}
+void function(int map[][10], int n, int m, int c, int p, int total,int y)
+{
+	if (p == 2)
+	{
+		if (total > maxval)
+		{
+			maxval = total;
+		}
+	}
+	else
+	{
+		for (int i = y; i < n; ++i)
+		{
+			for (int j = 0; j <= n - m; ++j)
+			{
+				int chk = 0;
+				int val = 0;
+				vector<int> v;
+				int ny = 0;
+				int nx = 0;
+				for (int h = 0; h < m; ++h)
+				{
+					ny = i;
+					nx = j + h;
+					if (chkmap[ny][nx] != 1)
+					{
+						chk++;
+					}
+					else
+						break;
+				}
+				if (chk == m)
+				{
+					for (int h = 0; h < m; ++h)
+					{
+						ny = i;
+						nx = j + h;
+						chkmap[ny][nx] = 1;
+						v.push_back(map[ny][nx]);
+					}
+					vector<bool> visited(v.size(), 0);
+					for (int r = 1; r <= m; ++r)
+					{
+						func(v, visited, 0, r,c);
+					}
+					val = q.top();
+					for (int qi = 0; qi < q.size(); ++qi)
+					{
+						q.pop();
+					}
+					function(map, n, m, c, p + 1, total+val,ny);
+					for (int h = 0; h < m; ++h)
+					{
+						ny = i;
+						nx = j + h;
+						chkmap[ny][nx] = 0;
+					}
+				}
+			}
+		}
+	}
+}
+int main(int argc, char** argv)
+{
+	int test_case;
+	int T;
+	cin >> T;
+	for (test_case = 1; test_case <= T; ++test_case)
+	{
+		int map[10][10];
+		int n;
+		int m;
+		int c;
+		cin >> n >> m >> c;
+		for (int i = 0; i < n; ++i)
+		{
+			for (int j = 0; j < n; ++j)
+			{
+				cin >> map[i][j];
+			}
+		}
+		function(map, n, m, c, 0, 0,0);
+		cout <<"#"<<test_case<<" "<< maxval<<"\n";
+		maxval = 0;
+	}
+	return 0;
+}
