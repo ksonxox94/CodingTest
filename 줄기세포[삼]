@@ -1,0 +1,96 @@
+/*
+벡터,큐,배열 등 여러 자료구조 요소를 고려해서 문제를 어떻게 풀지 생각해봐야 함.
+무조건적으로 dfs,bfs가 풀이 해답이 아닐 수 있음.
+*/
+#include <iostream>
+#include <vector>
+using namespace std;
+int dy[4] = { 0,1,0,-1 }; //동남서북
+int dx[4] = { 1,0,-1,0 }; 
+struct cell
+{
+	int life;
+	int active;
+	int y;
+	int x;
+};
+struct mymap
+{
+	int level;
+	bool before;
+};
+int solution(vector<vector<mymap>> map, vector<cell> v, int k)
+{
+	for (int t = 1; t <= k; t++) //한 시간동안
+	{
+		int size = v.size();
+		for (int i = 0; i < size; ++i) //한 시간이 지나가면 벡터에 있는 모든 세포의 before를 1로 바꿔줌
+		{
+			int y = v[i].y;
+			int x = v[i].x;
+			map[y][x].before = 1;
+		}
+		for (int i = 0; i < size; ++i) //세포가 있는 모든 벡터 탐색
+		{
+			if (v[i].life > 0)
+			{
+				v[i].active--; //시간마다 벡터의 active가 빠짐/초기 active는 레벨+1 (활성 후 1시간 뒤 번식하므로)
+				v[i].life--; //시간마다 벡터의 life가 빠짐/초기 life는 레벨X2 
+				int y = v[i].y;
+				int x = v[i].x;
+				if (v[i].active == 0)//세포의 active가 0이 되면 활성화된 것
+				{
+					for (int d = 0; d < 4; ++d) //동서남북 탐색해서
+					{
+						int ny = y + dy[d];
+						int nx = x + dx[d];
+						if (map[ny][nx].level == 0 || (map[ny][nx].before == 0 && (map[y][x].level > map[ny][nx].level))) //맵에 세포가 없거나 or 같은 시간대에 세포가 생겼지만 level이 더 높을때
+						{
+							map[ny][nx].level = map[y][x].level;
+							v.push_back({ map[y][x].level * 2,map[y][x].level + 1,ny,nx });//번식 된 세포를 기존 벡터 뒤에다 추가해줌
+						}
+					}
+				}
+			}
+		}
+	}
+	int cnt = 0;
+	for (int i = 0; i < v.size(); ++i)
+	{
+		if (v[i].life > 0)
+			cnt++;
+	}
+	return cnt;
+}
+int main(int argc, char** argv)
+{
+	int test_case;
+	int T;
+	cin >> T;
+	for (test_case = 1; test_case <= T; ++test_case)
+	{
+		int n, m, k;
+		cin >> n >> m >> k;
+		vector<vector<mymap>> map(700,vector<mymap>(700,{0,0}));
+		vector<cell> v; 
+		/*
+		핵심:
+		#유효한 좌표를 벡터에 추가하고 새로 탐색되는 좌표를 벡터에 푸쉬백함
+		:시간 단위로 맵에 있는 유효한 모든 좌표를 탐색해서 관리해야하므로 큐보다 벡터가 용이함
+		:(1)유효한 좌표를 가지고있는 벡터와 (2)탐색을 위한 2차원 벡터 2가지를 관리해야함
+		*/
+		for (int i = 325; i < 325 + n; ++i)
+		{
+			for (int j = 325; j < 325 + m; ++j)
+			{
+				cin >> map[i][j].level;
+				if (map[i][j].level > 0)
+				{
+					v.push_back({ map[i][j].level * 2,map[i][j].level + 1,i,j });
+				}
+			}
+		}
+		cout << "#" << test_case << " " << solution(map, v, k)<<"\n";
+	}
+	return 0;
+}
