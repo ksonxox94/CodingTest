@@ -1,0 +1,50 @@
+//분류:이진탐색
+//공유기를 m개 설치할 때 가장 인접한 두 공유기 사이 거리가 최대가 될 때 그 거리를 출력 
+#include<iostream>
+#include<algorithm>
+using namespace std;
+int home[200000];
+int binarySearch(int n, int c)
+{
+	int right = home[n - 1]-home[0]; //두 집 사이의 최대 거리
+	int left = 1;//두 집 사이의 최소 거리
+	int answer = 1;
+	while (left <= right)
+	{
+		int prev = 0; 
+		int cnt = 1; //cnt는 설치한 공유기 수
+		int mid = (left + right) / 2; //mid는 가장 인접한 두 공유기 사이의 거리 예상값
+		for (int i = 1; i < n; ++i)
+		{
+			if (home[i] - home[prev] >= mid) //직전에 공유기를 설치한 집과 다음 집의 거리가 mid보다 크면 다음 집에 공유기 설치
+			{
+				cnt++;
+				prev = i;//직전에 공유기 설치한 집을 방금 공유기를 설치한 집으로 바꿈
+			}
+		}
+		if (cnt >= c)//설치한 공유기 수가 c보다 크거나 같으면
+		{
+			left = mid + 1;//left를 mid+1로 해서 가장 인접한 공유기 사이의 거리를 늘려줌
+			answer = mid;
+		}
+		else//설치한 공유기 수가 c보다 작으면
+		{
+			right = mid - 1;//right를 mid-1로 해서 가장 인접한 공유기 사이의 거리를 좁혀줌
+		}
+	}
+	return answer;
+}
+int main()
+{
+	ios_base::sync_with_stdio(false);
+	cin.tie(NULL);
+	int n, c;
+	cin >> n >> c;
+	for (int i = 0; i < n; ++i)
+	{
+		cin >> home[i];
+	}
+	sort(home, home + n);
+	cout << binarySearch(n, c);
+	return 0;
+}
