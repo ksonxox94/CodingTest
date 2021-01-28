@@ -1,0 +1,164 @@
+#include<iostream>
+#include<vector>
+#include<string>
+#include<algorithm>
+using namespace std;
+bool compare(string a, string b)
+{
+    if (a.length() == b.length())
+        return a < b;
+    else
+    {
+        return a.length() < b.length();
+    }
+}
+bool lower_compare(string a, string b)
+{
+    if (a.length() == b.length())
+        return a > b;
+    else
+    {
+        return a.length() > b.length();
+    }
+}
+bool upper_compare(string a, string b)
+{
+    if (a.length() == b.length())
+        return a >= b;
+    else
+    {
+        return a.length() >= b.length();
+    }
+}
+int myLowerBound(vector<string> words, string key)
+{
+    //key가 middle보다 크면 left=middle+1
+    //key가 middle보다 같거나 작으면 right=middle
+    int left = 0;
+    int right = words.size();//마지막 인덱스+1이 right가 되어야 함(찾는 key 값이 마지막 인덱스에 있을 수도 있어서)
+    int middle = 0;
+    while (left < right)
+    {
+        middle = (left + right) / 2;
+        if (lower_compare(key, words[middle]))
+            left = middle +1;
+        else
+            right = middle;
+    }
+    return right;
+    //만약 찾는 값이 모든 원소보다 클 때 : s만 증가하고 e는 그대로이므로 e가 그대로 lower_bound가 됨
+    //만약 찾는 값이 모든 원소보다 작을 때 : e가 0이 될때까지 갱신되므로 0이 lower_bound가 됨
+}
+int myUpperBound(vector<string> words, string key)
+{
+    //key가 middle보다 같거나 크면 left=middle+1
+    //key가 middle보다 작으면 right=middle
+    int left = 0;
+    int right = words.size();//마지막 인덱스+1이 right가 되어야 함(찾는 key 값이 마지막 인덱스에 있을 수도 있어서)
+    int middle = 0;
+    while (left < right)
+    {
+        middle = (left + right) / 2;
+        if (upper_compare(key, words[middle]))
+            left = middle + 1;
+        else
+            right = middle;
+    }
+    return right;
+    //만약 찾는 값이 모든 원소보다 클 때 :  s만 증가하고 e는 그대로이므로 e가 그대로 upper_bound가 됨
+    //만약 찾는 값이 모든 원소보다 작을 때 : e가 0이 될때까지 갱신되므로 0이 upper_bound가 됨
+}
+void print(vector<string> words)
+{
+    for (int i = 0; i < words.size(); ++i)
+    {
+        cout << words[i] << " ";
+    }
+    cout << "\n";
+}
+vector<int> solution(vector<string> words, vector<string> queries)
+{
+    vector<int> answer;
+    vector<string> rwords;
+    sort(words.begin(), words.end(), compare);
+    //print(words);
+    for (int i = 0; i < words.size(); ++i)
+    {
+        string temp = words[i];
+        reverse(temp.begin(), temp.end());
+        rwords.push_back(temp);
+    }
+    sort(rwords.begin(), rwords.end(), compare);
+    //print(rwords);
+    for (int i = 0; i < queries.size(); ++i)
+    {
+        string query = queries[i];
+        int start, end, pos;
+        //vector<string>::iterator start, end;
+        if (query[0] == '?')
+        {
+            reverse(query.begin(), query.end());
+            pos = query.find("?");
+            for (int i = pos; i < query.length(); ++i)
+            {
+                query[i] = 'a';
+
+            }
+            start = myLowerBound(rwords, query);
+            //cout << "start:" << start << "\n";
+            //start = lower_bound(rwords.begin(), rwords.end(), query, compare);
+            for (int i = pos; i < query.length(); ++i)
+            {
+                query[i] = 'z';
+            }
+            end = myUpperBound(rwords, query);
+            //cout << "end:" << end << "\n";
+            //end = upper_bound(rwords.begin(), rwords.end(), query, compare);
+        }
+        else
+        {
+            pos = query.find("?");
+            for (int i = pos; i < query.length(); ++i)
+            {
+                query[i] = 'a';
+            }
+            start = myLowerBound(words, query);
+            //cout << "start:" << start << "\n";
+            //start = binarySearch(words, query);
+            for (int i = pos; i < query.length(); ++i)
+            {
+                query[i] = 'z';
+            }
+            end = myUpperBound(words, query);
+            //cout << "end:" << end << "\n";
+            //end = upper_bound(words.begin(), words.end(), query, compare) - words.begin();
+        }
+        answer.push_back(end - start);
+    }
+    return answer;
+}
+int main()
+{
+    vector<string> words;
+    vector<string> queries;
+    int n, m;
+    cin >> n >> m;
+    for (int i = 0; i < n; ++i)
+    {
+        string word;
+        cin >> word;
+        words.push_back(word);
+    }
+    for (int i = 0; i < m; ++i)
+    {
+        string query;
+        cin >> query;
+        queries.push_back(query);
+    }
+    vector<int> answer = solution(words, queries);
+    for (int i = 0; i < answer.size(); ++i)
+    {
+        cout << answer[i] << " ";
+    }
+    return 0;
+}
