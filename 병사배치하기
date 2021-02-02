@@ -1,0 +1,38 @@
+#include<iostream>
+#include<vector>
+#include<algorithm>
+using namespace std;
+int main()
+{
+	int n;
+	vector<int> v;
+	cin >> n;
+	for (int i = 0; i < n; ++i)
+	{
+		int power;
+		cin >> power;
+		v.push_back(power);
+	}
+	vector<int> dp(n, 1);
+	reverse(v.begin(), v.end());
+	//18 23 5 11 4 20 17 3
+	//앞에서 수를 고르면 뒤에는 무조건 앞에 수보다 커야됨   
+	//dp[1]=2  
+	//dp[2]=1 
+	//dp[3]=2  ->4번째 병사를 뽑았을 때 가능한 최대 병사 수
+	//dp[4]=1
+	//dp[5]=dp[0]+1>dp[5]=2 // dp[2]+1==dp[5]=2  // dp[3]+1>dp[5]=3
+	//dp[6]=dp[2]+1>dp[6]=2 // dp[3]+1>dp[6]=3  // dp[4]+1<dp[6]=3
+	//dp[7]=1
+	for (int i = 1; i<n; ++i)
+	{
+		for (int j = 0; j < i; ++j) //v[i]보다 앞에 있고 작은 수들을 찾아 
+		{
+			if (v[j] < v[i])
+			{
+				dp[i] = max(dp[j] + 1,dp[i]); //그 수를 뽑았을 때 최대치+1 vs dp[i]를 비교해서 dp[i]를 최대치로 갱신
+			}
+		}
+	}
+	cout << n-(*max_element(dp.begin(), dp.end()));
+}
