@@ -1,0 +1,70 @@
+#include<iostream>
+#include<vector>
+#include<queue>
+using namespace std;
+#define INF 1e9
+struct node
+{
+	int index;
+	int dist;
+};
+struct compare
+{
+	bool operator()(node a, node b)
+	{
+		return a.dist > b.dist;
+	}
+};
+vector<int> dijkstra(vector<pair<int, int>> graph[100], vector<int> distance, vector<bool> visited, int n, int start)
+{
+	priority_queue<node, vector<node>, compare> q;
+	
+	distance[start] = 0;
+	visited[start] = true;
+	for (int i = 0; i < graph[start].size(); ++i)
+	{
+		distance[graph[start][i].first] = graph[start][i].second;
+		q.push({ graph[start][i].first,graph[start][i].second });
+	}
+	for (int i = 0; i < n - 1; ++i)
+	{
+		int now = q.top().index;
+		q.pop();
+		visited[now] = true;
+		for (int j = 0; j < graph[now].size(); ++j)
+		{
+			int cost = distance[now] + graph[now][j].second;
+			if (cost < distance[graph[now][j].first])
+			{
+				distance[graph[now][j].first] = cost;
+				q.push({ graph[now][j].first,cost});
+			}
+		}
+	}
+	return distance;
+}
+int main()
+{
+	int n, m, start;
+	cin >> n >> m >> start;
+	vector<pair<int, int>> graph[100];
+	vector<bool> visited(n + 1, false);
+	vector<int> distance(n + 1, INF);
+
+	for (int i = 0; i < m; ++i)
+	{
+		int from, to, dist;
+		cin >> from >> to >> dist;
+		graph[from].push_back(make_pair(to, dist));
+	}
+
+	distance = dijkstra(graph, distance, visited, n, start);
+	
+	for (int i = 1; i < n + 1; ++i)
+	{
+		if (distance[i] == INF)
+			cout << "infinity\n";
+		else
+			cout << distance[i] << "\n";
+	}
+}
