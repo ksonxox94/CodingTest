@@ -1,0 +1,79 @@
+#include<iostream>
+#include<vector>
+using namespace std;
+#define INF 1e9
+/*
+<Dijkstra>
+1차원 distance[n+1] : 출발 노드부터 각 노드 까지의 최단거리를 저장하는 벡터
+1차원 visited[n+1] : 방문 여부 벡터
+2차원 graph[n+1][n+1] : first 인덱스 노드부터 갈 수 있는 노드들의 (인덱스,거리)를 저장하는 2차원 벡터
+
+1.출발 노드 설정
+2.출발 노드로부터 distance 테이블 초기화
+for(전체 노드 수-1 만큼 반복)
+{
+	3.방문하지 않은 노드 중 최단 거리가 가장 짧은 노드 선택하고 방문 처리
+	4.해당 노드를 거쳐 다른 노드로 가는 비용 계산하여 최단 거리 테이블 초기화
+}
+     tip.한 단계가 진행되고 나면 그 방문한 노드까지의 최단거리가 완료됨
+*/
+int get_smallest_node(vector<int> distance,vector<bool> visited,int n)
+{	//최단거리 테이블에서 (1)아직 방문하지 않았고 (2)가장 가까운 노드를 뽑는 함수
+	int min_value = INF;
+	int index = 0;
+	for (int i = 0; i < n + 1; ++i)
+	{
+		if (distance[i] < min_value && !visited[i])
+		{
+			min_value = distance[i];
+			index = i;
+		}
+	}
+	return index;
+}
+vector<int> dijkstra(vector<vector<pair<int,int>>> graph,vector<int> distance, vector<bool> visited, int n,int start)
+{
+	distance[start] = 0;
+	visited[start] = true;
+	for (int i = 1; i < graph[start].size(); ++i)
+	{
+		distance[graph[start][i].first] = graph[start][i].second; //시작노드부터 한번에 갈 수 있는 노드들의 최단 거리 테이블을 초기화
+	}
+	for (int i = 0; i < n-1; ++i)//시작 노드 제외하고 모든 노드에 대해 반복
+	{
+		int now = get_smallest_node(distance, visited, n);//한번에 갈수 있고 방문하지 않은 노드 중 가장 가까운 노드를 뽑음
+		visited[now] = true; //해당 노드 방문 처리
+		for (int j = 1; j < graph[now].size(); ++j)//방문한 노드에서 갈 수 있는 노드들을 탐색
+		{
+			int cost = distance[now] + graph[now][j].second;//현재 노드까지 최단 거리+현재 노드부터 방문한 노드까지 거리 
+			if (cost < distance[graph[now][j].first])//방문한 노드의 최단거리 테이블 값보다 작으면
+			{
+				distance[graph[now][j].first] = cost; //방문한 노드의 최단거리 테이블 갱신
+			}
+		}
+
+	}
+	return distance;
+}
+int main()
+{
+	int n, m, start;
+	cin >> n >> m >> start;
+	vector<vector<pair<int,int>>> graph(n+1,vector<pair<int,int>>(n+1,make_pair(0,0)));
+	vector<bool> visited(n + 1, false);
+	vector<int> distance(n + 1, INF);
+	for (int i = 0; i < m; ++i)
+	{
+		int from, to, dist;
+		cin >> from >> to  >> dist;
+		graph[from].push_back(make_pair(to, dist));
+	}
+	distance=dijkstra(graph,distance,visited,n,start);
+	for (int i = 1; i < n + 1; ++i)
+	{
+		if (distance[i] == INF)
+			cout << "infinity\n";
+		else
+			cout << distance[i]<<"\n";
+	}
+}
