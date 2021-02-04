@@ -1,0 +1,57 @@
+/*
+###플로이드-워셜 알고리즘###
+graph[N+1][N+1] : 2차원 배열에 최단거리 저장
+1.2차원 배열 모든 값 INF 초기화
+2.(i,i)값은 0으로 초기화
+3.
+for(k=거쳐가는 노드) 
+ for(a=출발 노드)
+  for(b=도착 노드)
+   graph[a][b]=min(graph[a][b],graph[a][k]+graph[k][b]);
+모든 a-k-b a-b의 경우에 대해 graph[a][b]를 갱신하면 모든 지점-다른 모든 지점까지의 최단 경로 구하기 가능
+*/
+#include<iostream>
+#include<vector>
+#include<algorithm>
+using namespace std;
+#define INF 1e9
+int main()
+{
+	int n, m;
+
+	cin >> n >> m;
+	vector<vector<int>> graph(n + 1, vector<int>(n + 1, INF));
+	for (int i = 1; i < n + 1; ++i)
+	{
+		graph[i][i] = 0;
+	}
+	for (int i = 0; i < m; ++i)
+	{
+		int a, b, c;
+		cin >> a >> b >> c;
+		graph[a][b] = c;
+	}
+	for (int k = 1; k < n+1; ++k)
+	{
+		for (int a = 1; a < n + 1; ++a)
+		{
+			for (int b = 1; b < n + 1; ++b)
+			{
+				graph[a][b] = min(graph[a][b], graph[a][k] + graph[k][b]); 
+			}
+		}
+
+		for (int i = 1; i < n + 1; ++i)
+		{
+			for (int j = 1; j < n + 1; ++j)
+			{
+				if (graph[i][j] == INF)
+					cout << "INF" << " ";
+				else
+					cout << graph[i][j] << "  ";
+			}
+			cout << "\n";
+		}
+		cout << "\n\n";
+	}
+}
