@@ -1,0 +1,70 @@
+#include<iostream>
+#include<vector>
+#include<algorithm>
+using namespace std;
+#define INF 3e7 //최대 노드 수 2E2 X 최대 비용 1E5 = 2E7이므로 2E7보다 더 크게 잡으면 됨
+int solution(int n, int s, int a, int b, vector<vector<int>> fares) 
+{
+    int answer = 0;
+    vector<vector<int>> graph = vector<vector<int>>(n + 1, vector<int>(n + 1, INF));
+    for (int i = 1; i < n+1 ; ++i)
+    {
+        graph[i][i] = 0; //자기 자신으로 가는 cost는 0
+    }
+    for (auto f : fares)
+    {
+        graph[f[0]][f[1]] = f[2];
+        graph[f[1]][f[0]] = f[2]; //양방향으로 같은 cost
+    }
+    for (int k = 1; k < n + 1; ++k) //플로이드-워셜 알고리즘
+    {
+        for (int a = 1; a < n + 1; ++a)
+        {
+            for (int b = 1; b < n + 1; ++b)
+            {
+                graph[a][b] = min(graph[a][b], graph[a][k] + graph[k][b]);
+            }
+        }
+    }
+    int fmin = INF;
+    for (int i = 1; i < n + 1; ++i)
+    {
+        int cost = graph[s][i] + graph[i][a] + graph[i][b];
+        if(fmin>cost) //모든 환승하는 경우에 대한 최소 cost값 갱신
+        {
+            fmin = cost;
+        }
+    }
+    answer = min(fmin, graph[s][a] + graph[s][b]); //환승했을 때 최소값과 환승 안했을 때 최소값 비교해 최소 cost 구함
+    return answer;
+}
+int main()
+{
+    int n, s, a, b;
+    cin >> n >> s >> a >> b;
+    int maxn = n * (n - 1) / 2;
+    vector<vector<int>> fares = vector<vector<int>>(5, vector<int>(3, 0));
+    for (int i = 0; i < 5; ++i)
+    {
+        int from, to, cost;
+        cin >> from >> to >> cost;
+        fares[i][0] = from;
+        fares[i][1] = to;
+        fares[i][2] = cost;
+    }
+    cout<<solution(n,s,a,b,fares);
+}
+/*
+    <input sample>
+    6 4 6 2
+    4 1 10
+    3 5 24
+    5 6 2
+    3 1 41
+    5 1 24
+    4 6 50
+    2 4 66
+    2 3 22
+    1 6 25
+    https://programmers.co.kr/learn/courses/30/lessons/72413
+*/
