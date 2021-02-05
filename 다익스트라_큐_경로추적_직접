@@ -1,0 +1,82 @@
+#include<iostream>
+#include<vector>
+#include<algorithm>
+#include<queue>
+#define INF 1e9
+using namespace std;
+struct node
+{
+	int index;
+	int dist;
+};
+struct compare
+{
+	bool operator()(node a,node b)
+	{
+		return a.dist > b.dist;
+	}
+};
+void dijkstra(vector<vector<node>> &graph, vector<int> &distance, vector<int> &way, int n, int m, int s)
+{
+	priority_queue<node, vector<node>, compare> q;
+	distance[s] = 0;
+	q.push({ s,distance[s] });
+	while (!q.empty())
+	{
+		int now = q.top().index;
+		int dist = q.top().dist;
+		q.pop();
+		if (dist > distance[now])
+			continue;
+		for (auto n : graph[now])
+		{
+			int next = n.index;
+			int cost = n.dist;
+			int total = distance[now] + cost;
+			if (total < distance[next])
+			{
+				distance[next] = total;
+				q.push({ next,distance[next] });
+				way[next] = now;
+			}
+		}
+	}
+}
+void printWay(vector<int> &way,int start,int end)
+{
+	if (end != start)
+	{
+		printWay(way, start, way[end]);
+		cout << way[end] << "->";
+	}
+}
+int main()
+{
+	int n,m,s;
+	cin >> n>>m>>s;
+	vector<vector<node>> graph = vector<vector<node>>(n + 1, vector<node>());
+	vector<int> distance = vector<int>(n + 1, INF);
+	vector<int> way = vector<int>(n + 1,0);
+	for (int i = 0; i < m; ++i)
+	{
+		int from, to, cost;
+		cin >> from >> to >> cost;
+		graph[from].push_back({ to,cost });
+	}
+	dijkstra(graph,distance,way, n, m, s);
+	for (int i = 1; i < n + 1; ++i)
+	{
+		cout << "출발지가 " << s << "일 때 " << i << "까지 #최적 경로:";
+		if (distance[i] == INF)
+		{
+			cout << "없음\n";
+		}
+		else
+		{
+			printWay(way, s, i);
+			cout  << i << " ";
+			cout << "#최단 거리:"<<distance[i]<<"\n";
+		}	
+	}
+	return 0;
+}
