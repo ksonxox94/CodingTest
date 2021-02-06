@@ -14,7 +14,7 @@ int main()
 		v.push_back(power);
 	}
 	vector<int> dp(n, 1);
-	reverse(v.begin(), v.end());
+	//reverse(v.begin(), v.end());
 	//18 23 5 11 4 20 17 3
 	//앞에서 수를 고르면 뒤에는 무조건 앞에 수보다 커야됨   
 	//dp[1]=2  
@@ -28,7 +28,7 @@ int main()
 	{
 		for (int j = 0; j < i; ++j) //v[i]보다 앞에 있고 작은 수들을 찾아 
 		{
-			if (v[j] < v[i])
+			if (v[j] > v[i])
 			{
 				dp[i] = max(dp[j] + 1,dp[i]); //그 수를 뽑았을 때 최대치+1 vs dp[i]를 비교해서 dp[i]를 최대치로 갱신
 			}
