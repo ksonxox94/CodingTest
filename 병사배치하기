@@ -26,7 +26,7 @@ int main()
 	//dp[7]=1
 	for (int i = 1; i<n; ++i)
 	{
-		for (int j = 0; j < i; ++j) //v[i]보다 앞에 있고 작은 수들을 찾아 
+		for (int j = 0; j < i; ++j) //v[i]보다 앞에 있고 큰 수들을 찾아 
 		{
 			if (v[j] > v[i])
 			{
