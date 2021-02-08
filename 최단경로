@@ -1,0 +1,70 @@
+#include<iostream>
+#include<vector>
+#include<queue>
+#define INF 3e5
+using namespace std;
+struct node
+{
+	int index;
+	int dist;
+};
+struct compare
+{
+	bool operator()(node a, node b)
+	{
+		return a.dist > b.dist;
+	}
+};
+vector<node> graph[300001];
+priority_queue<node, vector<node>, compare> q;
+int main()
+{
+	ios_base::sync_with_stdio(false);
+	cin.tie(NULL);
+
+	int v,e,k;
+	cin >> v >> e >> k;
+	for (int i = 0; i < e; ++i)
+	{
+		int from, to, cost;
+		cin >> from >> to >> cost;
+		graph[from].push_back({ to,cost });
+	}
+
+	vector<int> distance = vector<int>(v + 1, INF);
+	distance[k] = 0;
+	q.push({ k,0 });
+
+	while (!q.empty())
+	{
+		int now = q.top().index;
+		int dist = q.top().dist;
+		q.pop();
+		if (dist > distance[now]) //나중에 불필요한 탐색 막아줌(시간적으로 크게 차이는 안날듯)
+			continue;
+		for (auto n : graph[now])
+		{
+			int next = n.index;
+			int cost = n.dist;
+			int total_cost = dist + cost;
+			if (total_cost < distance[next])
+			{
+				distance[next] = total_cost;
+				q.push({next, total_cost});
+			}
+		}
+	}
+
+	for (int i = 1; i < v + 1; ++i)
+	{
+		if (distance[i] == INF)
+		{
+			cout << "INF\n";
+		}
+		else
+		{
+			cout << distance[i] << "\n";
+		}
+	}
+	return 0;
+}
