@@ -68,7 +68,7 @@ int main()
 {
 	int n, m, start;
 	cin >> n >> m >> start;
-	vector<vector<pair<int, int>>> graph=vector<vector<pair<int,int>>>(n+1,vector<pair<int,int>>());
+	vector<vector<pair<int, int>>> graph[m+1];
 	//graph[index] : index 노드부터 갈 수 있는 {다음 노드 index,다음 노드까지 거리}를 저장하는 벡터
 	vector<int> distance(n + 1, INF);
 	//distance[index] : 시작노드부터  각 index 노드까지의 최단거리가 갱신되는 벡터
