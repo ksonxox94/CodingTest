@@ -1,0 +1,77 @@
+#include<iostream>
+#include<vector>
+#include<queue>
+using namespace std;
+#define INF 125*125*10 //최대 125x125 맵, 한 칸의 cost가 최대 9
+int dy[4] = { 0,1,0,-1 }; //동남서북
+int dx[4] = {1,0,-1,0};
+struct pos //좌표 저장
+{
+	int y;
+	int x;
+};
+struct node //좌표와 시작점부터 좌표까지 비용 저장
+{
+	pos site;
+	int dist;
+};
+struct compare
+{
+	bool operator()(node a, node b) //오름차순 우선순위큐
+	{
+		return a.dist > b.dist;
+	}
+};
+int main()
+{
+	ios_base::sync_with_stdio(false);
+	cin.tie(NULL);
+	int n;
+	int t = 0;
+	while (true)
+	{
+		priority_queue<node, vector<node>, compare> q; //큐는 어차피 empty 되므로 한번 만들어놓고 돌려씀
+		vector<vector<int>> graph(125, (vector<int>(125, 0))); //125x125 2차원 벡터를 한번 만들어놓고 돌려씀
+		cin >> n;
+		if (n == 0)
+			break;
+		for (int i = 0; i < n; ++i)
+		{
+			for (int j = 0; j < n; ++j)
+			{
+				int k;
+				cin >> k;
+				graph[i][j] = k;
+			}
+		}
+		vector<vector<int>> distance(n, (vector<int>(n, INF))); //좌표까지의 최소 비용이 갱신되는 2차원 벡터
+		distance[0][0] = graph[0][0]; //시작 좌표까지 최소 비용은 시작점의 cost
+		q.push({ { 0,0 },graph[0][0] });//큐에다가 시작 좌표와 cost를 넣어줌
+		while (!q.empty()) //큐가 empty 될 때까지
+		{
+			pos now = q.top().site; //현재 좌표
+			int dist = q.top().dist; //현재 좌표까지 비용
+			q.pop();
+			if (dist > distance[now.y][now.x]) //현재 좌표까지 비용이 distance에 있는 비용 값보다 크면 의미 없으므로 버림 
+				continue;
+			for (int d = 0; d < 4; ++d) //현재 좌표로부터 갈 수 있는 좌표 탐색
+			{
+				int newY = now.y + dy[d];
+				int newX = now.x + dx[d];
+				if (0 <= newY && newY < n && 0 <= newX && newX < n)
+				{
+					int cost = distance[now.y][now.x] + graph[newY][newX]; //현재 좌표까지 최소 비용 + 다음 좌표의 비용이
+					if (cost < distance[newY][newX])//다음 좌표에 해당하는 distance 값보다 작으면
+					{
+		
+						distance[newY][newX] = cost;//다음 좌표에 해당하는 distance 값을 새로 갱신
+						q.push({ {newY,newX},cost });//큐에 다음 좌표와 distance 값을 넣어줌
+					}
+				}
+			}
+		}
+		++t;
+		cout << "Problem " <<t<<": "<< distance[n - 1][n - 1] << "\n";
+	}
+	return 0;
+}
