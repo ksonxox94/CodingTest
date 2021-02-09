@@ -1,0 +1,93 @@
+#include<iostream>
+#include<vector>
+#include<algorithm>
+using namespace std;
+struct planet //노드 정보
+{
+	int x;
+	int y;
+	int z;
+	int idx;
+};
+struct edge //엣지 정보
+{
+	int a;
+	int b;
+	int cost;
+};
+bool compareX(planet a, planet b)
+{
+	return a.x < b.x;
+}
+bool compareY(planet a, planet b)
+{
+	return a.y < b.y;
+}
+bool compareZ(planet a, planet b)
+{
+	return a.z < b.z;
+}
+bool compareE(edge a,edge b)
+{
+	return a.cost < b.cost;
+}
+int findParent(vector<int>& parent, int x) //패런트 찾기
+{
+	if (parent[x] != x)
+		parent[x] = findParent(parent, parent[x]);
+	return parent[x];
+}
+void unionParent(vector<int>& parent, int a, int b) //엣지를 연합에 추가하기
+{
+	a = findParent(parent, a);
+	b = findParent(parent, b);
+	if (a < b)
+		parent[b] = a;
+	else
+		parent[a] = b;
+}
+int main()
+{
+	int n;
+	int result = 0;
+	cin >> n;
+	vector<planet> plist; //노드 리스트
+	vector<edge> elist; //엣지 리스트
+	vector<int> parent(n, 0); //패런트 리스트
+	for (int i = 0; i < n; ++i)
+	{
+		int x, y, z;
+		cin >> x >> y >> z;
+		plist.push_back({ x,y,z,i }); 
+		parent[i] = i;
+	}
+	sort(plist.begin(), plist.end(), compareX); //노드를 x 기준으로 정렬해서
+	for (int i=0;i<n-1;++i) //순서대로 노드 사이의 비용을 구하면 x 기준 최소 신장트리의 각 비용이 됨
+		elist.push_back({ plist[i].idx, plist[i + 1].idx, abs(plist[i].x - plist[i + 1].x) });
+	sort(plist.begin(), plist.end(), compareY);
+	for (int i = 0; i < n-1; ++i) //y기준
+		elist.push_back({ plist[i].idx, plist[i + 1].idx, abs(plist[i].y - plist[i + 1].y) });
+	sort(plist.begin(), plist.end(), compareX);
+	for (int i = 0; i < n-1; ++i) //z기준
+		elist.push_back({ plist[i].idx, plist[i + 1].idx, abs(plist[i].z - plist[i + 1].z) });
+	//x기준 y기준 z기준 정렬해서 엣지 비용 구한거를 한 리스트에 모아서
+
+	sort(elist.begin(), elist.end(), compareE);//비용 순으로 정렬
+
+	for (auto n : elist)//크루스칼 알고리즘
+	{
+		if (findParent(parent, n.a) != findParent(parent, n.b))
+		{
+			unionParent(parent, n.a, n.b);
+			result = result + n.cost;
+		}
+	}
+	cout << result;
+}
+/*
+https://www.acmicpc.net/problem/2887
+간선들이 있으면
+가장 비용이 낮은 간선부터 뽑아서
+간선을 연결하는 두 노드의 부모가 다르면
+연합에 추가하고 전체비용을 갱신
+*/
