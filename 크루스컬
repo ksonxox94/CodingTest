@@ -1,0 +1,74 @@
+#include<iostream>
+#include<vector>
+#include<algorithm>
+using namespace std;
+struct edge
+{
+	int a;
+	int b;
+	int cost;
+};
+bool compare(edge a, edge b)
+{
+	return a.cost < b.cost;
+}
+int findParent(vector<int> &parent, int x) //재귀 구조를 통해 노드의 최상위 부모를 찾음
+{
+	if (parent[x] != x)
+	{
+		parent[x] = findParent(parent, parent[x]);
+	}
+	return parent[x]; //마지막 단 리턴 값이 함수의 최종 리턴 값이 됨
+}
+void unionParent(vector<int> &parent, int a, int b)
+{//간선을 통해 이동 가능한 노드들에 대해 최상위(가장 작은 수) 노드를 부모 노드로 두고 연결
+	a = findParent(parent, a);
+	b = findParent(parent, b);
+	if (a < b) //부모 노드를 비교해서 작은 수를 큰 수의 부모 노드로 설정
+		parent[b] = a;
+	else
+		parent[a] = b;
+}
+int main()
+{
+	int v, e;
+	int result = 0;
+	cin >> v >> e;
+	vector<int> parent(v + 1, 0);
+	vector<edge> edges;
+	for (int i = 1; i < v + 1; ++i)
+	{
+		parent[i] = i;
+	}
+	for (int i = 0; i < e; ++i)
+	{
+		int a, b,cost;
+		cin >> a >> b >> cost;
+		edges.push_back({ a,b,cost });
+	}
+	sort(edges.begin(), edges.end(),compare); //간선 오름차순 정렬
+	for (auto e : edges)
+	{
+		if (findParent(parent, e.a) != findParent(parent, e.b)) //탐색한 간선의 두 노드의 부모 노드가 다르면(사이클이 없으면)
+		{
+			unionParent(parent, e.a, e.b); //유니온에 추가
+			result = result + e.cost; //전체 비용에 해당 간선 비용 추가
+		}
+	}
+	cout << result;
+	return 0;
+}
+/*
+
+7 9
+1 2 29
+1 5 75
+2 3 35
+2 6 34
+3 4 7
+4 6 23
+4 7 13
+5 6 53
+6 7 25
+
+*/
