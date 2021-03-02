@@ -1,63 +1,52 @@
 /*
 https://programmers.co.kr/learn/courses/30/lessons/60059
 */
-#include <string>
 #include <vector>
 #include <iostream>
-
 using namespace std;
-
-//1.왼쪽 90도 회전=오른쪽 90도 회전 3번(왼쪽 회전은 구현할 필요 없음)
-//2.lock 2차원배열을 lock.size+2(key.size-1) 늘린 다음 모든 좌표점에서 시작하는 회전한 key의 값과 더함
-//3.그리고 기존 lock 2차원 배열의 모든 값이 1이면 true 아니면 false임
+vector<vector<int>> rotate90right(vector<vector<int>> key) //왼쪽 90도 회전=오른쪽 90도 회전 3번(왼쪽 회전은 구현할 필요 없음)
+{
+	vector<vector<int>> newkey(key.size(), vector<int>(key.size(), 0));
+	for (int i = 0; i < key.size(); i++)
+		for (int j = 0; j < key.size(); j++)
+			newkey[i][j] = key[key.size() - 1 - j][i];
+	return newkey;
+}
 bool solution(vector<vector<int>> key, vector<vector<int>> lock) {
 	bool answer = false;
-	int M = key.size();
-	int N = lock.size();
-	for (int time = 0; time < 4; time++) {
-
-		vector<vector<int>> newkey(M, vector<int>(M, 0));
-
-		for (int i = 0; i < M; i++)
-			for (int j = 0; j < M; j++)
-				newkey[i][j] = key[M - 1 - j][i];
-
-		for (int i = 0; i < M; i++)
-			for (int j = 0; j < M; j++)
-				key[i][j] = newkey[i][j];
-
-
-		for (int i = 0; i < N + M - 1; i++) {
-			for (int j = 0; j < N + M - 1; j++) {
-
-				vector<vector<int>> newlock(2 * M - 2 + N, vector<int>(2 * M - 2 + N, 0));
-
-				//기존 lock 부분 값 넣어주기 
-				for (int ii = 0; ii < N; ii++)
+	int ksize = key.size();
+	int lsize = lock.size();
+	vector<vector<int>> newlock(2 * ksize - 2 + lsize, vector<int>(2 * ksize - 2 + lsize, 0)); //lock 2차원배열을 lock.size+2*(key.size-1) 사이즈로 늘림
+	for (int time = 0; time < 4; time++) 
+	{
+		key = rotate90right(key);//키를 회전시킬 수 있는 경우의 수(0' 90' 180' 270')
+		for (int i = 0; i < lsize + ksize - 1; i++)//키를 이동시킬 수 있는 경우의 수
+		{
+			for (int j = 0; j < lsize + ksize - 1; j++) 
+			{	
+				for (int ii = 0; ii < lsize; ii++)//중앙 위치에 기존 자물쇠를 둠
 				{
-					for (int jj = 0; jj < N; jj++)
+					for (int jj = 0; jj < lsize; jj++)
 					{
-						newlock[ii + M - 1][jj + M - 1] = lock[ii][jj];
+						newlock[ii + ksize - 1][jj + ksize - 1] = lock[ii][jj];
 					}
 				}
-
-				//
-				for (int ii = 0; ii < M; ii++) {
-					for (int jj = 0; jj < M; jj++) {
-						newlock[ii + i][jj + j] += newkey[ii][jj];
+				for (int ii = 0; ii < ksize; ii++)//이동한 위치에서 키 값과 자물쇠 값을 더함
+				{
+					for (int jj = 0; jj < ksize; jj++) 
+					{
+						newlock[i+ii][j+jj] = newlock[i + ii][j + jj]+key[ii][jj];
 					}
 				}
-
 				int count = 0;
-				for (int ii = M - 1; ii < M + N - 1; ii++) {
-					for (int jj = M - 1; jj < M + N - 1; jj++) {
+				for (int ii = ksize - 1; ii < lsize + ksize - 1; ii++) { //중앙 위치의 기존 자물쇠가 1인 개수를 구함
+					for (int jj = ksize - 1; jj < lsize + ksize - 1; jj++) {
 						if (newlock[ii][jj] == 1) {
 							count++;
 						}
 					}
 				}
-				if (count == N * N) {
-
+				if (count == lsize * lsize) { //모두 1이면 일치
 					return true;
 				}
 			}
