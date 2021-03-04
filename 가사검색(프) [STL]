@@ -2,55 +2,7 @@
 #include<vector>
 #include<string>
 #include<algorithm>
-/*
-<key> bra??
-<words> ant brake brave crown brazill
 
-upper bound= 키 값이 중간 값 "이상"이면 left=mid+1, 키 값이 중간 값 "미만"이면 right=mid 해서 최종적으로 key 값 보다 큰 값중 가장 작은 값의 인덱스
-<key> brazz
-left=0
-right=5
-mid=0+5/2=2
-mid[2]=brave
-brazz>=brave left=mid+1=3
-
-left=3
-right=5
-mid=3+5/2=4
-mid[4]=brazill
-brazz<brazill right=mid=4
-
-left=3
-right=4
-mid=3+4/2=3
-mid[3]=crown
-brazz<crown right=mid=3
-
-return 3
-
-
-lower bound= 키 값이 중간 값 "초과"면 left=mid+1, 키 값이 중간 값 "이하"면 right=mid해서 최종적으로 key 값을 만족하는 가장 작은 값의 인덱스
-left=0
-right=5
-mid=0+5/2=2
-mid[2]=brave
-bra??<=brave right=mid=2
-
-left=0
-right=2
-mid=0+2/2=1
-mid[1]=brake
-bra??<=brake right=mid=1
-
-left=0
-right=1
-mid=0+1/2=0
-mid[0]=ant
-bra??>ant left=mid+1=1
-
-return 1
-
-*/
 using namespace std;
 bool compare(string a, string b)
 {
@@ -136,3 +88,53 @@ int main()
    }
    return 0;
 }
+
+
+/*
+<테스트 예시>
+<key> bra??
+<words> ant brake brave crown brazill
+
+upper bound= 키 값이 중간 값 "이상"이면 left=mid+1, 키 값이 중간 값 "미만"이면 right=mid 해서 최종적으로 key 값 보다 큰 값중 가장 작은 값의 인덱스
+<key> brazz
+left=0
+right=5
+mid=0+5/2=2
+mid[2]=brave
+brazz>=brave left=mid+1=3
+
+left=3
+right=5
+mid=3+5/2=4
+mid[4]=brazill
+brazz<brazill right=mid=4
+
+left=3
+right=4
+mid=3+4/2=3
+mid[3]=crown
+brazz<crown right=mid=3
+
+return 3
+
+lower bound= 키 값이 중간 값 "초과"면 left=mid+1, 키 값이 중간 값 "이하"면 right=mid해서 최종적으로 key 값을 만족하는 가장 작은 값의 인덱스
+left=0
+right=5
+mid=0+5/2=2
+mid[2]=brave
+bra??<=brave right=mid=2
+
+left=0
+right=2
+mid=0+2/2=1
+mid[1]=brake
+bra??<=brake right=mid=1
+
+left=0
+right=1
+mid=0+1/2=0
+mid[0]=ant
+bra??>ant left=mid+1=1
+
+return 1
+*/
