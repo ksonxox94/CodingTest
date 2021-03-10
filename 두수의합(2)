@@ -1,0 +1,44 @@
+#include<iostream>
+#include<vector>
+using namespace std;
+int main()
+{
+	ios_base::sync_with_stdio(false);
+	cin.tie(NULL);
+	int n;
+	int m;
+	cin >> n >> m;
+	vector<int> v(n, 0);
+	for (int i = 0; i < n; ++i)
+	{
+		cin >> v[i];
+	}
+	int left = 0; //더해야할 시작점을 뜻함
+	int right = 0;//더해야할 종료점을 뜻함
+	int sum = 0;
+	int res = 0;
+	while (left <= right)
+	{
+		if (sum >= m) //합이 M 이상이면 다음 LEFT 부터 새로 더함
+		{
+			sum = sum - v[left];
+			left++;
+		}
+		else if (right == n) //RIGHT가 N이 되면 모든 수를 탐색했으므로 종료
+		{
+			break;
+		}
+		else //합이 M 미만이면 V[RIGHT]를 더하고 RIGHT를 1 증가
+		{
+			sum = sum + v[right];
+			right++;
+		}
+		
+		if (sum == m) //합이 M이면 RES 올림
+		{
+			++res;
+		}
+	}
+	cout << res;
+	return 0;
+}
