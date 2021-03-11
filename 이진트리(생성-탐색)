@@ -1,0 +1,61 @@
+#include<iostream>
+#include<vector>
+using namespace std;
+int n = 15;
+struct node
+{
+	int data;
+	node *left;
+	node *right;
+};
+void preorder(node *pointer)
+{//전위 : 부모->왼쪽->오른쪽
+	if (pointer)
+	{
+		cout << pointer->data << ' ';
+		preorder(pointer->left);
+		preorder(pointer->right);
+	}
+}
+void inorder(node *pointer)
+{//중위 : 왼쪽->부모->오른쪽
+	if (pointer)
+	{
+		inorder(pointer->left);
+		cout << pointer->data << ' ';
+		inorder(pointer->right);
+	}
+}
+void postorder(node *pointer)
+{//후위 : 왼쪽->오른쪽->부모
+	if (pointer)
+	{
+		postorder(pointer->left);
+		postorder(pointer->right);
+		cout << pointer->data <<' ';
+	}
+}
+int main()
+{
+	vector<node> nodes(n + 1);
+	for (int i = 1; i <= n; ++i)
+	{
+		nodes[i].data = i;
+		nodes[i].left = NULL;
+		nodes[i].right = NULL;
+	}
+	for (int i = 2; i <= n; ++i)
+	{
+		if (i % 2 == 0)
+		{
+			nodes[i / 2].left = &nodes[i];
+		}
+		else
+		{
+			nodes[i / 2].right = &nodes[i];
+		}
+	}
+	postorder(&nodes[1]);
+	cout << "\n";
+	return 0;
+}
