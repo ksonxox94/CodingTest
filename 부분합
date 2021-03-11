@@ -1,0 +1,47 @@
+#include<iostream>
+#include<vector>
+#include<algorithm>
+using namespace std;
+int main()
+{
+	ios_base::sync_with_stdio(false);
+	cin.tie(NULL);
+	int n;
+	int s;
+	int ans = 0;
+	cin >> n >> s;
+	vector<int> arr(n, 0);
+	for (int i = 0; i < n; ++i)
+	{
+		cin >> arr[i];
+	}
+	int left = 0;
+	int right = 0;
+	int sum = 0;
+	int min = 200000; //수열 길이 N의 최대 범위가 10만이므로
+	while (left <= right) 
+	{
+		if (sum >= s) //합이 S 이상이면
+		{
+			sum = sum - arr[left]; //합에서 LEFT 값을 빼고
+			if (right - left  < min) //수열 길이가 MIN보다 작으면
+			{
+				min = right - left;//MIN 갱신
+			}
+			++left; //다음 LEFT부터 탐색함
+		}
+		else if (right == n)//RIGHT가 N이 되면 모든 가능한 범위를 탐색한 뒤므로 탐색 종료
+		{
+			break;
+		}
+		else //합이 S 미만이면 RIGHT 값을 합에 더하고 RIGHT를 증가
+		{
+			sum = sum + arr[right];
+			++right;
+		}
+	}
+	if (min == 200000)
+		cout << 0;
+	else
+		cout << min;
+}
