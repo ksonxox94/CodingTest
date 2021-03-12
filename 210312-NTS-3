@@ -1,0 +1,59 @@
+/*
+오델로 문제 : 검은돌을 놨을때 두 검은돌 사이에 백돌이 있으면 그 백돌을 검은색돌로 바꿈
+주어진 오목판 진행 상황에서 한 좌표에 검은돌을 놨을때 백돌을 최고로 많이 뒤집을 수 있는 수를 구해라
+*/
+#include<vector>
+using namespace std;
+int dy[8]={-1,-1,0,1,1,1,0,-1};//북 북동 동 남동 남 남서 서 서북
+int dx[8]={0,1,1,1,0,-1,-1,-1};
+int solution(vector<vector<int> > board)
+{
+    int answer = 0;
+    int bsize=board.size();
+    for(int i=0;i<bsize;++i) //모든 좌표를 탐색
+    {
+        for(int j=0;j<bsize;++j)
+        {
+            int sum=0; //검은돌을 한 좌표에 놓았을때 바꿀 수 있는 흰돌 수
+            if(board[i][j]==0) //검은돌을 놓을 수 있는 빈 좌표면
+            {
+                for(int d=0;d<8;++d) //그 좌표에 검은돌을 놓았을때 8방향으로 탐색해서
+                {
+                    int newY=i;
+                    int newX=j;
+                    int wcnt=0; //그 방향에서 흰돌의 수 카운트
+                    while(true) //그 방향으로 쭉 흰돌이 있는지 확인  
+                    {
+                        newY=newY+dy[d]; 
+                        newX=newX+dx[d];
+                        if(0>newY||newY>=bsize||0>newX||newX>=bsize) //탐색한 좌표가 범위 밖이면
+                        {
+                            wcnt=0; //반대편에 검은돌이 없는 경우이므로 흰돌 카운트를 0으로 초기화
+                            break; //해당 방향 탐색 중단
+                        }
+                        if(board[newY][newX]==2) //탐색한 좌표가 흰돌이면
+                        {
+                            ++wcnt; //흰돌 수를 증가하고
+                            continue; //해당 방향으로 계속 탐색
+                        }
+                        if(board[newY][newX]==1) //탐색한 좌표가 검은돌이면
+                        {
+                            break; //흰돌 수 카운트를 유지한채로 해당 방향 탐색 중단
+                        }
+                        if(board[newY][newX]==0) //탐색한 좌표가 빈 자리면
+                        {
+                            wcnt=0; //반대편에 검은돌이 없는 경우이므로 흰돌 카운트를 0으로 초기화
+                            break; //해당 방향 탐색 중단
+                        }
+                    }
+                    sum=sum+wcnt; //해당 방향 탐색이 흰돌 카운트 합산을 업데이트함
+                }
+                if(sum>answer) //만약 그 합산이 이전에 저장된 최대 합산보다 크면
+                {
+                    answer=sum; //그 합산으로 업데이트함
+                }
+            }
+        }
+    }
+    return answer;
+}
