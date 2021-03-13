@@ -1,0 +1,14 @@
+호텔 정보(places) 테이블, 날짜별 요금(schedules) 테이블 2개 주고 
+1월6일~1월7일 이틀 예약할건데 2박에 400달러 넘지 않는 호텔 목록 도출
+
+places 테이블 : id, name
+schecules 테이블 : id, scheculed_at, price
+
+select p.id, p.name, sum(s.price) as 임대료
+from places as p 
+    join schedules as s
+    on p.id = s.place_id
+where s.scheduled_at in ('2019-01-06%', '2019-01-07%')
+group by p.id
+having sum(s.price) <= 400 and count(p.name) = 2
+order by p.id;
