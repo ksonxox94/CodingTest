@@ -1,0 +1,36 @@
+#include<iostream>
+#include<vector>
+#include<algorithm>
+using namespace std;
+int result;
+int treeSize;
+vector<int> nodes;
+int dfs(int idx)
+{
+	if (idx * 2 >= treeSize) //단말노드에 도달했을 때
+	{
+		result = result + nodes[idx]; //가중치를 합산하고
+		return nodes[idx]; //단말노드 가중치 반환
+	}
+	else
+	{
+		int left = dfs(idx * 2); //left = idx노드 기준 왼쪽 방향 최대 거리 값  
+		int right = dfs(idx * 2 + 1); //righ = idx노드 기준 오른쪽 방향 최대 거리 값
+		result = result + nodes[idx] + abs(right - left); //왼쪽과 오른쪽 가중치를 맞추기 위해 더하는 값과 현재 노드 가중치를 합산
+		return nodes[idx] + max(left, right); //해당 노드 가중치 + left/right 방향 중 더 큰 가중치 반환
+	}
+}
+int main()
+{
+	int k;
+	cin >> k;
+	treeSize = 1 << (k + 1);
+	nodes = vector<int>(treeSize,0);
+	for (int i = 2; i < treeSize; ++i)
+	{
+		cin >> nodes[i];
+	}
+	dfs(1);
+	cout << result;
+	return 0;
+}
