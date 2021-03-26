@@ -1,0 +1,68 @@
+/*
+string을 int로 변환 : stoi(string)
+한자리 수 int를 char로 변환 : char num = int + '0'
+여러자리 수 int를 string으로 변환 : string num = to_string(int)
+*/
+#include<iostream>
+#include<vector>
+#include<string>
+using namespace std;
+string encoding(string s)
+{
+	string result;
+	int cnt;
+	char key;
+	for (int i = 0; i < s.length(); i = i + cnt) // cnt 뒤의 문자부터
+	{
+		cnt = 0; //cnt 0으로 초기화
+		key = s[i];//문자열의 i번째 문자를 key로
+		while (key == s[i+cnt])//i+cnt 문자가 key와 같으면
+		{
+			++cnt;//cnt를 증가
+		}
+		if (cnt > 1)//cnt가 2 이상이면
+		{
+			result=result+to_string(cnt);//result에 cnt 붙임
+		}
+		result.push_back(key); //result에 key 붙임
+	}
+	return result;
+}
+string decoding(string s)
+{
+	string result;
+	string s_cnt;
+	int cnt = 1;
+	for (int i = 0; i < s.length(); ++i)
+	{
+		if (s[i] >='A'&&s[i] <= 'Z')//s[i]가 A~Z(알파벳 대문자)이면
+		{
+			if (s_cnt.length() > 0)//s_cnt에 값이 있으면
+			{
+				cnt = stoi(s_cnt);//s_cnt 값을 int형 cnt로 변환
+				s_cnt = "";//s_cnt를 빈 문자열로 초기화
+			}
+			for (int j = 0; j < cnt; ++j)//cnt만큼 s[i]를 result에 추가
+			{
+				result.push_back(s[i]);
+			}
+			cnt = 1;
+		}
+		else//s[i]가 A~Z가 아니면(숫자이면) s_cnt에 해당 문자(숫자) 추가
+		{
+			s_cnt.push_back(s[i]);
+		}
+	}
+	return result;
+}
+int main()
+{
+	string keyword;
+	cout<<"encoding할 문자열 입력:";
+	cin >> keyword;
+	cout << encoding(keyword)<<"\n";
+	cout << "decoding할 문자열 입력:";
+	cin >> keyword;
+	cout << decoding(keyword)<<"\n";
+	return 0;
+}
