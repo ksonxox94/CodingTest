@@ -11,12 +11,10 @@ string encoding(string s)
 {
 	string result;
 	int cnt;
-	char key;
 	for (int i = 0; i < s.length(); i = i + cnt) // cnt 뒤의 문자부터
 	{
 		cnt = 0; //cnt 0으로 초기화
-		key = s[i];//문자열의 i번째 문자를 key로
-		while (key == s[i+cnt])//i+cnt 문자가 key와 같으면
+		while (s[i] == s[i+cnt])//s[i+cnt] 문자가 s[i]와 같으면
 		{
 			++cnt;//cnt를 증가
 		}
@@ -24,7 +22,7 @@ string encoding(string s)
 		{
 			result=result+to_string(cnt);//result에 cnt 붙임
 		}
-		result.push_back(key); //result에 key 붙임
+		result.push_back(s[i]); //result에 s[i] 붙임
 	}
 	return result;
 }
