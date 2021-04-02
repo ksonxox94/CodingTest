@@ -1,0 +1,24 @@
+#include <string>
+#include <vector>
+#include <unordered_map>
+using namespace std;
+string solution(vector<string> participant, vector<string> completion) {
+    unordered_map<string,int> map;
+    string answer="";
+    for(auto name:participant)
+    {
+        ++map[name];
+    }
+    for(auto name:completion)
+    {
+        --map[name];
+    }
+    for(auto ptr:map)
+    {
+        if(ptr.second>0)
+        {
+            answer=ptr.first;
+            return answer;
+        }
+    }
+}
