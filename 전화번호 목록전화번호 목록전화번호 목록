@@ -1,0 +1,28 @@
+https://programmers.co.kr/learn/courses/30/lessons/42577
+#include <string>
+#include <vector>
+#include <unordered_map>
+using namespace std;
+bool solution(vector<string> phone_book) {
+	bool answer = true;
+	unordered_map<string, int> phone_map;
+	for(auto phone_num : phone_book)
+    {
+        ++phone_map[phone_num]; //맵에 모든 전화번호를 key로 삽입
+    }
+    for (auto phone_num : phone_book)
+	{
+        for(int i=1;i<phone_num.length();++i) //1부터 전화번호-1 길이만큼 잘라서 
+        {//전화번호 길이랑 똑같이 자르면 본인이랑 똑같은 번호를 찾는 것과 같으므로 안됨
+            string str=phone_num.substr(0,i); 
+            if(phone_map.find(str)!=phone_map.end()) //맵에 자른 번호가 있는지 확인
+            {
+                answer=false; //있으면 false하고 바로 답 반환
+                break;
+            }
+        }
+        if(answer==false)
+            break;
+    }
+	return answer;
+}
