@@ -1,0 +1,46 @@
+#include <string>
+#include <vector>
+#include <unordered_map>
+using namespace std;
+int solution(vector<vector<string>> clothes) 
+{
+    int answer=1;
+    unordered_map<string,int> map;
+	for(auto type:clothes)
+    {
+        ++map[type[1]]; //종류 별 개수 계산해서 저장
+    }
+    for(auto typeNum:map)//종류가 A B C 3개 있다면
+    {
+        answer*=(typeNum.second+1); //(종류 A개수+1)*(종료 B개수+1)*(종류 C개수+1)-1이 답
+        //+1 해주는 이유는 종류 A를 하나도 안고르는 경우까지 포함해야하므로
+        //마지막에 최종적으로 모든 종류를 하나도 안입는경우만 빼줌
+    }
+	return answer-1;
+}
+
+/* 조합 경우의 수 구하는 재귀함수 사용 방법(but 효율성 제한)
+#include <string>
+#include <vector>
+#include <unordered_map>
+using namespace std;
+int answer = 0;
+unordered_map<string, bool> chkmap;
+void func(vector<vector<string>> clothes, int start)
+{
+	for (int i = start; i < clothes.size(); ++i)
+	{//이전 옷 집합과 중복인 경우 카운트하지 않고 바로 다음 옷 탐색
+		if (chkmap.find(clothes[i][1]) == chkmap.end())
+		{
+			chkmap[clothes[i][1]] = 1;
+			++answer;
+			func(clothes, i + 1); //탐색한 옷이 이전 옷 집합과 중복되지 않는 타입인 경우 집합에 포함시키고 다음 옷 탐색
+			chkmap.erase(clothes[i][1]); //erase하고 for문 다음 인덱스로 넘어가는 경우는 탐색한 옷을 고르지 않았을 경우에 해당
+		}
+	}
+}
+int solution(vector<vector<string>> clothes) {
+	func(clothes, 0);
+	return answer;
+}
+*/
