@@ -1,0 +1,60 @@
+#include <string>
+#include <vector>
+#include <unordered_map>
+#include <algorithm>
+#include <iostream>
+using namespace std;
+struct my
+{
+	string genre;
+	int plays;
+	int idx;
+};
+bool bigyo(pair<string, int> a, pair<string, int> b)
+{
+	return a.second > b.second;
+}
+bool mbigyo(my a, my b)
+{
+	return a.plays > b.plays;
+}
+vector<int> solution(vector<string> genres, vector<int> plays)
+{
+	vector<int> answer;
+	unordered_map<string, int> map;
+	vector<my> fv;
+	for (int i = 0; i < plays.size(); ++i)
+	{
+		map[genres[i]] += plays[i]; //맵을 이용해 장르당 총 재생횟수를 저장
+		fv.push_back({ genres[i],plays[i],i }); //벡터를 이용해 곡의 장르명, 곡 재생횟수, 곡 번호를 저장
+	}
+	vector<pair<string, int>> v(map.begin(), map.end()); //★맵을 정렬하기 위해서는 같은 자료형의 벡터에 담아서 정렬 수행
+	sort(v.begin(), v.end(), bigyo); //총 재생횟수 내림차순 정렬
+	sort(fv.begin(), fv.end(), mbigyo); //곡 재생횟수 내림차순 정렬 ★sort 정렬 수행시 비교할 값이 같을 경우 인덱스 순서는 유지됨
+	for (auto n : v)//총 재생횟수가 큰 장르 순서대로
+	{
+		int cnt = 0;
+		for (int i = 0; i < fv.size(); ++i) 
+		{
+			if (n.first.compare(fv[i].genre) == 0) //재생횟수가 높은 곡을 찾아 2개씩 벡터에 삽입
+			{
+				answer.push_back(fv[i].idx);
+				++cnt;
+			}
+			if (cnt == 2)
+				break;
+		}
+	}
+	return answer;
+}
+int main()
+{
+	vector<string> genres = { "classic", "pop", "rnb", "classic","rnb" ,"classic", "pop", "rock" };
+	vector<int> plays = { 500, 600, 300, 150, 500, 800, 2500 ,900 };
+	vector<int> answer=solution(genres, plays);
+	for (auto i : answer)
+	{
+		cout << i<< " ";
+	}
+	return 0;
+}
