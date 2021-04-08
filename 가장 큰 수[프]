@@ -1,0 +1,69 @@
+#include <string>
+#include <vector>
+#include <iostream>
+#include <algorithm>
+using namespace std;
+bool mysort(pair<int, int> a, pair<int, int> b)
+{
+	if (a.first == b.first) //변형시킨 네자릿 수가 같을 때는 변형시키기 전의 숫자의 마지막 자리를 비교해서 큰 값이 앞에 오게함 
+		return a.second%10 > b.second%10;
+	else
+		return a.first > b.first; //변형시킨 네자릿 수 중 큰 값을 앞으로 오게 함
+}
+vector<pair<int, int>> func(vector<int> numbers)
+{
+	vector<pair<int, int>> v;
+	for (int i = 0; i < numbers.size(); ++i)
+	{
+		int num = numbers[i];
+		string s = to_string(num);
+		int fn = (s[0] - '0'); 
+		while (0 < num && num < 1000) //1~999 수에다가 그 수의 첫번째 자리 수를 뒤에다가 붙여줘서 네자릿 수로 만듬 
+		{
+			num = num * 10 + fn;
+		}
+		v.push_back({ num,numbers[i] });
+	}
+	return v;
+}
+string solution(vector<int> numbers) {
+	string answer = "";
+	vector<pair<int, int>> v = func(numbers);
+	sort(v.begin(), v.end(), mysort);
+	if (v[0].first == 0) //가장 큰 수가 0일때는 "0"이 답
+	{
+		answer = answer + '0';
+	}
+	else
+	{
+		for (auto vnum : v) //변형시킨 수를 정렬한 순서대로 기존 숫자들이 붙여진 문자열이 답이 됨
+		{
+			answer = answer + to_string(vnum.second);
+		}
+	}
+	return answer;
+}
+int main()
+{ 
+	vector<int> numbers = {8,88,888 };                        
+	cout<<solution(numbers);     
+	return 0;
+}
+	/*테스트 케이스 
+	입 [90,908,89,898,10,101,1,8,9] 
+	출 [9,90,908,89,898,8,1,101,10]
+
+	입 [15,151]
+	출 [15,151]
+
+	입 [10,1,101]
+	출 [101,10,1]
+
+	입 [0, 0, 0]
+	출 [0]
+	
+	#포인트 : 두 수를 붙여서 큰 수를 만들려면 
+	각 수의 첫번째 자리를 각 수의 뒤에다 붙여서 같은 자릿 수로 만들고
+	더 큰 값이 앞으로 오게 해야함.
+	만약 구한 값이 같다면 각 수의 마지막 자리 숫자를 비교해서 큰 값이 앞으로 오게 해야함
+	*/
