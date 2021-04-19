@@ -1,0 +1,28 @@
+#include <string>
+#include <vector>
+using namespace std;
+int cnt=0;
+void dfs(vector<int> numbers,int target,int sum,int idx) // 덧셈이므로 n개 수를 연산하는 순서는 모두 동일함
+{
+    if(idx==numbers.size()) //n개의 숫자를 모두 계산에 사용했으면
+    {
+        if(sum==target) //계산 결과가 target과 같으면
+        {
+            ++cnt; //카운트하고 재귀문 탈출
+            return;
+        }
+        else //다르면 그냥 재귀문 탈출
+            return;
+    }
+    else
+    {
+        dfs(numbers,target,sum-numbers[idx],idx+1); // idx번째 수를 음수로 더했을 때
+        dfs(numbers,target,sum+numbers[idx],idx+1); // idx번째 수를 양수로 더했을 때
+    }
+}
+int solution(vector<int> numbers, int target) {
+    int answer = 0;
+    dfs(numbers,target,0,0);
+    answer=cnt;
+    return answer;
+}
