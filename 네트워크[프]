@@ -1,0 +1,33 @@
+#include <string>
+#include <vector>
+#include <unordered_map>
+using namespace std;
+unordered_map<int, int> map;
+void func(vector<vector<int>> computers, int n, int s)
+{
+	for (int j = 0; j < n; ++j) //기준 컴퓨터로부터 연결된 컴퓨터를 찾음
+	{
+		if ((computers[s][j] == 1) && (map.find(j) == map.end())) //탐색한 컴퓨터가 기준 컴퓨터와 연결되어있고 맵에 포함되어 있지 않다면
+		{
+			map.insert({ j,1 }); //탐색한 컴퓨터 인덱스를 맵에 추가함
+			if (s != j) //탐색한 컴퓨터가 기준 컴퓨터와 같은 컴퓨터가 아니라면 
+			{
+				func(computers, n, j); //탐색한 컴퓨터로부터 연결된 컴퓨터를 찾음
+			}
+		}
+	}
+}
+int solution(int n, vector<vector<int>> computers) {
+	int answer = 0;
+	int before = 0;
+	int netcnt = 0;
+	for (int i = 0; i < n; ++i) //0번째 컴퓨터부터 n-1번째 컴퓨터까지
+	{
+		before = map.size(); //map은 어떤 네트워크라도 포함된 컴퓨터들을 저장함
+		func(computers, n, i); //i번째 컴퓨터로부터 네트워크를 통해 연결된 모든 컴퓨터들을 map에 추가하는 DFS함수, 이미 하나의 네트워크에라도 포함되어 있다면 map에 추가하지 않음
+		if (map.size() - before > 0) //map의 크기가 변경되었다면 새로운 네트워크가 추가된 것
+			++netcnt;
+	}
+	answer = netcnt;
+	return answer;
+}
