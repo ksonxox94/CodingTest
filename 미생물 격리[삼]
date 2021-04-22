@@ -1,0 +1,108 @@
+#include<iostream>
+#include<queue>
+#include<vector>
+using namespace std;
+int dx[5] = {0,0,0,-1,1 };
+int dy[5] = {0,-1,1,0,0 };
+struct point
+{
+	int y, x, num, d;
+};
+struct my
+{
+	bool operator()(point a, point b)
+	{
+		return a.num < b.num;
+	}
+};
+priority_queue<point,vector<point>,my> q;
+void simulation(vector<vector<bool>> &visited, vector<vector<int>> &map, vector<vector<int>> &dir,int n)
+{
+	for (int i = 0; i < n; i++)
+	{
+		for (int j = 0; j < n; j++)
+		{
+			visited[i][j] = false;
+			if (map[i][j] != 0)
+			{
+				q.push({ i,j,map[i][j],dir[i][j] });
+			}
+		}
+	}
+	while (!q.empty())
+	{
+		int y = q.top().y;
+		int x = q.top().x;
+		int d = q.top().d;
+		int num = q.top().num;
+		q.pop();
+
+		int newY = y + dy[d];
+		int newX = x + dx[d];
+
+		if (!visited[y][x]) //현재 미생물이 이동하기 전에 있던 과거 좌표가 같은 시간 내 댜른 미생물에 의해 방문이 안됐다면 0으로 만들어줌 
+		{
+			map[y][x] = 0;
+			dir[y][x] = 0;
+		}
+
+		if (0 < newY && newY < (n - 1) && 0 < newX && newX < (n - 1)) //흰
+		{
+			if (visited[newY][newX])
+			{
+				map[newY][newX] += num;
+			}
+			else //우선순위 큐에 의해, 같은 시간 내 여러 미생물이 같은 좌표를 방문했을 경우, 가장 미생물 수가 많은 방향으로 설정됨
+			{
+				map[newY][newX] = num;
+				dir[newY][newX] = d;
+				visited[newY][newX] = true;
+			}
+		}
+		else //빨간
+		{
+			map[newY][newX] = num / 2;
+			if (d % 2 == 0)
+				dir[newY][newX] = d - 1;
+			else
+				dir[newY][newX] = d + 1;
+			visited[newY][newX] = true;
+		}
+		
+	}
+}
+
+int main(void)
+{
+	int test_case, n, m, k, ans;
+	cin >> test_case;
+	for (int t = 1; t <= test_case; t++)
+	{
+		cin >> n >> m >> k;
+		ans = 0;
+		vector<vector<bool>> visited(n, vector<bool>(n, 0));
+		vector<vector<int>> map(n, vector<int>(n, 0));
+		vector<vector<int>> dir(n, vector<int>(n, 0));
+		int y, x, num, d;
+		for (int i = 0; i < k; i++)
+		{
+			cin >> y >> x >> num >> d;
+			map[y][x] = num;
+			dir[y][x] = d;
+		}
+		for (int i = 0; i < m; i++)
+		{
+			simulation(visited,map,dir,n);
+		}
+		for (int i = 0; i < n; i++)
+		{
+			for (int j = 0; j < n; j++)
+			{
+				if (map[i][j] != 0)
+					ans += map[i][j];
+			}
+		}
+		cout << '#' << t << ' ' << ans << '\n';
+	}
+	return 0;
+}
