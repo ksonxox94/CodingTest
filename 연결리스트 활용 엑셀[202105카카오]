@@ -1,0 +1,163 @@
+#include <string>
+#include <vector>
+#include <iostream>
+#include <stack>
+using namespace std;
+struct set
+{
+	int idx;
+	int data;
+};
+struct node
+{
+	int data;
+	node *next;
+};
+stack<set> temp;
+void insertNode(node **head, int data, int cur)
+{
+	node *inserted = new node;
+	inserted->data = data;
+	if (cur == 0 || *head == NULL)
+	{
+		inserted->next = *head;
+		*head = inserted;
+	}
+	else
+	{
+		node *inserted_prev = *head;
+		for (int i = 0; i < (cur - 1) && (inserted_prev->next != NULL); ++i)
+		{
+			inserted_prev=inserted_prev->next;
+		}
+		node *inserted_next = inserted_prev->next;
+		inserted_prev->next = inserted;
+		inserted->next = inserted_next;
+	}
+}
+void removeNode(node **head, int cur)
+{
+	if (*head == NULL)
+	{
+		return;
+	}
+	node *removed = *head;
+	if (cur == 0)
+	{
+		*head=removed->next;
+		delete(removed);
+	}
+	else
+	{
+		node *removed_prev = *head;
+		removed = removed_prev->next;
+		for (int i = 0; i < (cur - 1) && (removed->next != NULL); ++i)
+		{
+			removed_prev = removed_prev->next;
+			removed = removed_prev->next;
+		}
+		removed_prev->next = removed->next;
+		temp.push({ cur,removed->data });
+		delete(removed);
+	}
+}
+int listLength(node *head)
+{
+	int len = 0;
+	node *itr = head;
+	while (itr != NULL)
+	{
+		len++;
+		itr = itr->next;
+	}
+	return len;
+}
+void printList(node *head) 
+{
+	node *itr = head;
+	while (itr != NULL)
+	{
+		cout << itr->data << " -> ";
+		itr = itr->next;
+	}
+	cout << "NULL\n";
+}
+string solution(int n, int k, vector<string> cmd) {
+	vector<int> last;
+	string answer = "";
+	int cur = k;
+	int newn = n;
+	node *head = NULL;
+	for (int i = n-1; i >=0; --i)
+	{
+		insertNode(&head, i, 0);
+		answer.push_back('X'); //기존 데이터 수만큼 모두 X로 초기화
+	}
+	//printList(head);
+	for (int i = 0; i < cmd.size(); ++i) //행번호는 0부터
+	{
+		string nownum;
+		string nowcmd = cmd[i];
+		int cmdnum;
+		if (nowcmd[0] == 'U') //X칸 위에 행 성택
+		{
+			for (int c = 2; c < nowcmd.size(); ++c)
+			{
+				nownum.push_back(nowcmd[c]);
+			}
+			cmdnum = stoi(nownum);
+			cur = cur - cmdnum;
+		}
+		if (nowcmd[0] == 'D') //X칸 밑에 행 선택
+		{
+			for (int c = 2; c < nowcmd.size(); ++c)
+			{
+				nownum.push_back(nowcmd[c]);
+			}
+			cmdnum = stoi(nownum);
+			cur = cur + cmdnum;
+		}
+		if (nowcmd[0] == 'C') //현재 선택 행 삭제 후 아래 행(마지막 행이면 위에 행)
+		{
+			removeNode(&head, cur);
+			//printList(head);
+			if (cur == (newn - 1))
+			{
+				cur = cur - 1;
+			}
+ 			--newn;
+		}
+		if (nowcmd[0] == 'Z') //가장 최근 삭제 행 복구(선택된 행은 그대로)
+		{
+			int ridx=temp.top().idx;
+			int rdata = temp.top().data;
+			temp.pop();
+			insertNode(&head,rdata,ridx);
+			//printList(head);
+			if (ridx <= cur)
+			{
+				cur = cur + 1;
+			}
+		}
+	}
+	node *itr = head;
+	while (itr != NULL)
+	{
+		last.push_back(itr->data);
+		itr = itr->next;
+	}
+	for (auto n : last) //최종적으로 존재하는 값의 위치만 0로 바꿔주면 됨
+	{
+		answer[n] = 'O';
+	}
+	return answer;
+}
+int main()
+{
+	vector<string> cmd = { "D 2", "C", "U 3", "C", "D 4", "C", "U 2", "Z", "Z" };
+	string res=solution(8,2,cmd);
+	for (auto n : res)
+	{
+		cout << n;
+	}
+}
